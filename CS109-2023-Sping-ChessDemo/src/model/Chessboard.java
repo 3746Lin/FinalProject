@@ -132,7 +132,11 @@ public class Chessboard {
         }
         if (getChessPieceAt(src) == null ||calculateDistance(src,dest)!=1||getChessPieceAt(dest)!=null||inRiver(dest)) {
             return false;
-        }else {
+        }if (getChessPieceAt(src).getOwner().getColor()==Color.BLUE&&dest.getRow()==8&&dest.getCol()==3){
+            return false;
+        }if (getChessPieceAt(src).getOwner().getColor()==Color.RED&&dest.getRow()==0&&dest.getCol()==3){
+            return false;
+        } else {
             return true;
         }
     }

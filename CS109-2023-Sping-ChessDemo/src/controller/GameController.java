@@ -40,7 +40,6 @@ public class GameController implements GameListener {
         this.view = view;
         this.model = model;
         this.currentPlayer = PlayerColor.BLUE;
-
         view.registerController(this);
         initialize();
         view.initiateChessComponent(model);
@@ -48,11 +47,6 @@ public class GameController implements GameListener {
     }
 
     public void initialize() {
-        for (int i = 0; i < Constant.CHESSBOARD_ROW_SIZE.getNum(); i++) {
-            for (int j = 0; j < Constant.CHESSBOARD_COL_SIZE.getNum(); j++) {
-
-            }
-        }
     }
 
     // after a valid move swap the player

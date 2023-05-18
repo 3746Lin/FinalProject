@@ -35,6 +35,7 @@ public class ChessGameFrame extends JFrame {
         addLabel();
         addHelloButton();
         addInitialButton();
+        addBackground();
     }
 
     public ChessboardComponent getChessboardComponent() {
@@ -78,10 +79,10 @@ public class ChessGameFrame extends JFrame {
         add(button);
     }
     private void addInitialButton() {
-        JButton button = new JButton("Restart The Game");
+        JButton button = new JButton("Restart");
         button.addActionListener(new ButtonClickListener());
-        button.setLocation(HEIGTH-50, HEIGTH / 10 + 240);
-        button.setSize(300, 60);
+        button.setLocation(HEIGTH, HEIGTH / 10 + 180);
+        button.setSize(200, 60);
         button.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(button);
     }
@@ -95,6 +96,9 @@ public class ChessGameFrame extends JFrame {
                 });
         }
     }
+    public void addBackground(){
+    }
+
 
 
 //    private void addLoadButton() {
