@@ -6,6 +6,7 @@ import controller.GameController;
 import model.Chessboard;
 import model.*;
 
+import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -32,9 +33,18 @@ public class ElephantChessComponent extends Component {
         g2.drawString("象", getWidth() / 4, getHeight() * 5 / 8); // FIXME: Use library to find the correct offset.
         if (isSelected()) { // Highlights the model if selected.
             g.setColor(Color.RED);
-            g.drawOval(5, 5, getWidth()-10 , getHeight()-10);
+            g.drawOval(5, 5, getWidth() - 10, getHeight() - 10);
         }
-
-
+    }
+    public ImageIcon getImage(){
+        if (this.owner.getColor()==Color.red){
+            ImageIcon image;
+            image = new ImageIcon("D:/ljz/Java/FinalProject/CS109-2023-Sping-ChessDemo/resource/Elephant-red.jpg");
+            return image;
+        }else {
+            ImageIcon image;
+            image = new ImageIcon("D:/ljz/Java/FinalProject/CS109-2023-Sping-ChessDemo/resource/Elephant-blue.jpg");
+            return image;
+        }
     }
 }

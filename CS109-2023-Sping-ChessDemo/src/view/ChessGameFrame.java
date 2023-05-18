@@ -31,11 +31,11 @@ public class ChessGameFrame extends JFrame {
         setLayout(null);
 
 
+        addBackground();
         addChessboard();
         addLabel();
         addHelloButton();
         addInitialButton();
-        addBackground();
     }
 
     public ChessboardComponent getChessboardComponent() {
@@ -59,9 +59,9 @@ public class ChessGameFrame extends JFrame {
      * 在游戏面板中添加标签
      */
     private void addLabel() {
-        JLabel statusLabel = new JLabel("Sample label");
-        statusLabel.setLocation(HEIGTH, HEIGTH / 10);
-        statusLabel.setSize(200, 60);
+        JLabel statusLabel = new JLabel("Basic Rule:Elephant>Lion>Tiger>Wolf>Dog>Cat>Rat(>Elephant)");
+        statusLabel.setLocation(100, 16);
+        statusLabel.setSize(800, 60);
         statusLabel.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(statusLabel);
     }
@@ -80,13 +80,13 @@ public class ChessGameFrame extends JFrame {
     }
     private void addInitialButton() {
         JButton button = new JButton("Restart");
-        button.addActionListener(new ButtonClickListener());
+        button.addActionListener(new RestartButtonClickListener());
         button.setLocation(HEIGTH, HEIGTH / 10 + 180);
         button.setSize(200, 60);
         button.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(button);
     }
-    public class ButtonClickListener implements ActionListener {
+    public class RestartButtonClickListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent arg0) {
                 SwingUtilities.invokeLater(() -> {
@@ -97,6 +97,12 @@ public class ChessGameFrame extends JFrame {
         }
     }
     public void addBackground(){
+        ((JPanel)this.getContentPane()).setOpaque(false);
+        ImageIcon image;
+        image = new ImageIcon("D:/ljz/Java/FinalProject/CS109-2023-Sping-ChessDemo/resource/background1.jpg");
+        JLabel background = new JLabel(image);
+        this.getLayeredPane().add(background,new Integer(Integer.MIN_VALUE));
+        background.setBounds(0,0,this.getWidth(),this.getHeight());
     }
 
 
