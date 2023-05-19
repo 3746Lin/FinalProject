@@ -59,10 +59,10 @@ public class ChessGameFrame extends JFrame {
      * 在游戏面板中添加标签
      */
     private void addLabel() {
-        JLabel statusLabel = new JLabel("Basic Rule:Elephant>Lion>Tiger>Wolf>Dog>Cat>Rat(>Elephant)");
-        statusLabel.setLocation(100, 16);
-        statusLabel.setSize(800, 60);
-        statusLabel.setFont(new Font("Rockwell", Font.BOLD, 20));
+        JLabel statusLabel = new JLabel("Options");
+        statusLabel.setLocation(HEIGTH+40, HEIGTH/10+60);
+        statusLabel.setSize(250, 60);
+        statusLabel.setFont(new Font("Rockwell", Font.BOLD, 30));
         add(statusLabel);
     }
 
@@ -71,18 +71,18 @@ public class ChessGameFrame extends JFrame {
      */
 
     private void addHelloButton() {
-        JButton button = new JButton("Show Hello Here");
-        button.addActionListener((e) -> JOptionPane.showMessageDialog(this, "Hello, world!"));
-        button.setLocation(HEIGTH, HEIGTH / 10 + 120);
-        button.setSize(200, 60);
+        JButton button = new JButton("Check Rule Here");
+        button.addActionListener((e) -> JOptionPane.showMessageDialog(this, "Basic Rule:Elephant>Lion>Tiger>Wolf>Dog>Cat>Rat(>Elephant)   "));
+        button.setLocation(HEIGTH-25, HEIGTH / 10 + 120);
+        button.setSize(250, 60);
         button.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(button);
     }
     private void addInitialButton() {
         JButton button = new JButton("Restart");
         button.addActionListener(new RestartButtonClickListener());
-        button.setLocation(HEIGTH, HEIGTH / 10 + 180);
-        button.setSize(200, 60);
+        button.setLocation(HEIGTH-25, HEIGTH / 10 + 180);
+        button.setSize(250, 60);
         button.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(button);
     }
