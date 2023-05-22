@@ -25,6 +25,7 @@ public class ChessboardComponent extends JComponent {
     private final Set<ChessboardPoint> Dens = new HashSet<>();
 
     private GameController gameController;
+    private boolean ChangeCurrentPlayer;
 
     public ChessboardComponent(int chessSize) {
         CHESS_SIZE = chessSize;
@@ -34,7 +35,6 @@ public class ChessboardComponent extends JComponent {
         setLayout(null); // Use absolute layout.
         setSize(width, height);
         System.out.printf("chessboard width, height = [%d : %d], chess size = %d\n", width, height, CHESS_SIZE);
-
         initiateGridComponents();
     }
 
@@ -208,6 +208,7 @@ public class ChessboardComponent extends JComponent {
             }
         }
     }
+
     public int getCHESS_SIZE(){
         return CHESS_SIZE;
     }
@@ -218,4 +219,7 @@ public class ChessboardComponent extends JComponent {
     public CellComponent getGridComponents(int i,int j){
         return gridComponents[i][j];
     }
+
+
+
 }

@@ -23,6 +23,8 @@ public class ChessGameFrame extends JFrame {
     private final int ONE_CHESS_SIZE;
 
     private ChessboardComponent chessboardComponent;
+    private JLabel statusLabel = new JLabel("CurrentPlayer:BLUE");
+    private JLabel TurnLabel = new JLabel("Turn:1");
     public ChessGameFrame(int width, int height) {
         setTitle("WHZ and LJZ's project"); //设置标题
         this.WIDTH = width;
@@ -38,11 +40,12 @@ public class ChessGameFrame extends JFrame {
         addBackground();
         addChessboard();
         addLabel();
-        addHelloButton();
+        addCheckRuleButton();
         addSaveButton();
         addLoadButton();
         addInitialButton();
-        refreshStatue(PlayerColor.BLUE,0);
+        addTurnLabel();
+        addCurrentPlayerLabel();
     }
 
     public ChessboardComponent getChessboardComponent() {
@@ -67,7 +70,7 @@ public class ChessGameFrame extends JFrame {
      */
     private void addLabel() {
         JLabel statusLabel = new JLabel("Options");
-        statusLabel.setLocation(HEIGTH+40, HEIGTH/10 + 60);
+        statusLabel.setLocation(HEIGTH+30, HEIGTH/10+60);
         statusLabel.setSize(250, 60);
         statusLabel.setFont(new Font("Rockwell", Font.BOLD, 30));
         add(statusLabel);
@@ -77,7 +80,7 @@ public class ChessGameFrame extends JFrame {
      * 在游戏面板中增加一个按钮，如果按下的话就会显示Hello, world!
      */
 
-    private void addHelloButton() {
+    private void addCheckRuleButton() {
         JButton button = new JButton("Check Rule Here");
         button.addActionListener((e) -> JOptionPane.showMessageDialog(this, "Basic Rule:Elephant>Lion>Tiger>Wolf>Dog>Cat>Rat(>Elephant)   "));
         button.setLocation(HEIGTH-25, HEIGTH / 10 + 120);
@@ -98,7 +101,7 @@ public class ChessGameFrame extends JFrame {
         public void actionPerformed(ActionEvent arg0) {
                 SwingUtilities.invokeLater(() -> {
                     chessboardComponent.getGameController().clearChessboard();
-                    chessboardComponent.registerController(new GameController(chessboardComponent, new Chessboard()));
+                    chessboardComponent.registerController(new GameController(chessboardComponent, new Chessboard(),chessboardComponent.getGameController().getChessGameFrame()));
                     chessboardComponent.repaint();
                 });
         }
@@ -111,12 +114,33 @@ public class ChessGameFrame extends JFrame {
         this.getLayeredPane().add(background,new Integer(Integer.MIN_VALUE));
         background.setBounds(0,0,this.getWidth(),this.getHeight());
     }
-
+    public void addCurrentPlayerLabel() {
+        if (chessboardComponent.getGameController() != null) {
+            JLabel ResetStatusLabel = new JLabel("CurrentPlayer:"+chessboardComponent.getGameController().getCurrentPlayer().toString());
+            remove(statusLabel);
+            statusLabel = ResetStatusLabel;
+        }
+        statusLabel.setLocation(160, 55);
+        statusLabel.setSize(180, 30);
+        statusLabel.setFont(new Font("Rockwell", Font.BOLD, 15));
+        add(statusLabel);
+    }
+    public void addTurnLabel() {
+        if (chessboardComponent.getGameController() != null) {
+            JLabel ResetTurnLabel = new JLabel("Turn:" + chessboardComponent.getGameController().getTurn());
+            remove(TurnLabel);
+            TurnLabel = ResetTurnLabel;
+        }
+        TurnLabel.setLocation(320, 55);
+        TurnLabel.setSize(300, 30);
+        TurnLabel.setFont(new Font("Rockwell", Font.BOLD, 15));
+        add(TurnLabel);
+    }
 
     private void addSaveButton() {
         JButton button = new JButton("Save");
-        button.setLocation(HEIGTH, HEIGTH / 10 + 280);
-        button.setSize(200, 60);
+        button.setLocation(HEIGTH-25, HEIGTH / 10 + 280);
+        button.setSize(250, 60);
         button.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(button);
 
@@ -136,26 +160,14 @@ public class ChessGameFrame extends JFrame {
 
     private void addLoadButton() {
         JButton button = new JButton("Load");
-        button.setLocation(HEIGTH, HEIGTH / 10 + 360);
-        button.setSize(200, 60);
+        button.setLocation(HEIGTH-25, HEIGTH / 10 + 360);
+        button.setSize(250, 60);
         button.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(button);
 
         button.addActionListener(e -> {
             this.chessboardComponent.getGameController().load("save.txt");
         });
-    }
-    public void refreshStatue(PlayerColor currentplayer, int rounds){
-        String out;
-        if(currentplayer == PlayerColor.BLUE)
-            out = "Current player: BLUE  Round: " + rounds;
-        else
-            out = "Current player: RED  Round: " + rounds;
-        JLabel label = new JLabel(out);
-        label.setLocation(160, 55);
-        label.setSize(300, 30);
-        label.setFont(new Font("Rockwell", Font.BOLD, 15));
-        add(label);
     }
 
 }

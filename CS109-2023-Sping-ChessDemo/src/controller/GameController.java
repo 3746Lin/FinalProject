@@ -26,22 +26,23 @@ public class GameController implements GameListener {
     private Chessboard model;
     private ChessboardComponent view;
     private PlayerColor currentPlayer;
-    private int Initialize=0;
     public int CountRedChess=8;
     public int CountBlueChess=8;
     private Component component1=null;
     private Component component2=null;
-    private int m=4;
-    private int l=0;
+    private int turn=1;
     private ArrayList<CellComponent> FirstCellComponentList=new ArrayList<>();
     private ArrayList<CellComponent> SecondCellComponentList=new ArrayList<>();
 
     // Record whether there is a selected piece before
     private ChessboardPoint selectedPoint;
+    private ChessGameFrame chessGameFrame;
 
-    public GameController(ChessboardComponent view, Chessboard model) {
+
+    public GameController(ChessboardComponent view, Chessboard model,ChessGameFrame chessGameFrame) {
         this.view = view;
         this.model = model;
+        this.chessGameFrame=chessGameFrame;
         this.currentPlayer = PlayerColor.BLUE;
 
         view.registerController(this);
@@ -126,6 +127,12 @@ public class GameController implements GameListener {
             view.setChessComponentAtGrid(point, view.removeChessComponentAtGrid(selectedPoint));
             selectedPoint = null;
             swapColor();
+            chessGameFrame.addCurrentPlayerLabel();
+            if (currentPlayer.getColor()==Color.BLUE){
+                turn++;
+                chessGameFrame.addTurnLabel();
+            }
+            chessGameFrame.repaint();
             view.repaint();
             for (int i=0;i<FirstCellComponentList.size();i++){
                 FirstCellComponentList.get(i).setSelected(false);
@@ -190,6 +197,12 @@ public class GameController implements GameListener {
                 view.setChessComponentAtGrid(point, view.removeChessComponentAtGrid(selectedPoint));
                 selectedPoint = null;
                 swapColor();
+                chessGameFrame.addCurrentPlayerLabel();
+                if (currentPlayer.getColor()==Color.BLUE){
+                    turn++;
+                    chessGameFrame.addTurnLabel();
+                }
+                chessGameFrame.repaint();
                 view.repaint();
                 for (int i=0;i<FirstCellComponentList.size();i++){
                     FirstCellComponentList.get(i).setSelected(false);
@@ -238,14 +251,17 @@ public class GameController implements GameListener {
         }
         // TODO: Implement capture function
     }
-    public int getInitialize(){
-        return Initialize;
-    }
-    public void setInitialize(int i){
-        this.Initialize=i;
-    }
     public Chessboard getChessboard(){
         return model;
+    }
+    public PlayerColor getCurrentPlayer(){
+        return currentPlayer;
+    }
+    public int getTurn(){
+        return turn;
+    }
+    public ChessGameFrame getChessGameFrame(){
+        return chessGameFrame;
     }
 
 }
