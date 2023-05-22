@@ -4,9 +4,13 @@ import java.awt.event.ActionListener;
 
 import controller.GameController;
 import model.Chessboard;
+import model.PlayerColor;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * 这个类表示游戏过程中的整个游戏界面，是一切的载体
@@ -35,7 +39,10 @@ public class ChessGameFrame extends JFrame {
         addChessboard();
         addLabel();
         addHelloButton();
+        addSaveButton();
+        addLoadButton();
         addInitialButton();
+        refreshStatue(PlayerColor.BLUE,0);
     }
 
     public ChessboardComponent getChessboardComponent() {
@@ -60,7 +67,7 @@ public class ChessGameFrame extends JFrame {
      */
     private void addLabel() {
         JLabel statusLabel = new JLabel("Options");
-        statusLabel.setLocation(HEIGTH+40, HEIGTH/10+60);
+        statusLabel.setLocation(HEIGTH+40, HEIGTH/10 + 60);
         statusLabel.setSize(250, 60);
         statusLabel.setFont(new Font("Rockwell", Font.BOLD, 30));
         add(statusLabel);
@@ -81,7 +88,7 @@ public class ChessGameFrame extends JFrame {
     private void addInitialButton() {
         JButton button = new JButton("Restart");
         button.addActionListener(new RestartButtonClickListener());
-        button.setLocation(HEIGTH-25, HEIGTH / 10 + 180);
+        button.setLocation(HEIGTH-25, HEIGTH / 10 + 200);
         button.setSize(250, 60);
         button.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(button);
@@ -90,9 +97,9 @@ public class ChessGameFrame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent arg0) {
                 SwingUtilities.invokeLater(() -> {
-                    ChessGameFrame mainFrame = new ChessGameFrame(1100, 810);
-                    GameController gameController = new GameController(mainFrame.getChessboardComponent(), new Chessboard());
-                    mainFrame.setVisible(true);
+                    chessboardComponent.getGameController().clearChessboard();
+                    chessboardComponent.registerController(new GameController(chessboardComponent, new Chessboard()));
+                    chessboardComponent.repaint();
                 });
         }
     }
@@ -106,20 +113,49 @@ public class ChessGameFrame extends JFrame {
     }
 
 
+    private void addSaveButton() {
+        JButton button = new JButton("Save");
+        button.setLocation(HEIGTH, HEIGTH / 10 + 280);
+        button.setSize(200, 60);
+        button.setFont(new Font("Rockwell", Font.BOLD, 20));
+        add(button);
 
-//    private void addLoadButton() {
-//        JButton button = new JButton("Load");
-//        button.setLocation(HEIGTH, HEIGTH / 10 + 240);
-//        button.setSize(200, 60);
-//        button.setFont(new Font("Rockwell", Font.BOLD, 20));
-//        add(button);
-//
-//        button.addActionListener(e -> {
-//            System.out.println("Click load");
-//            String path = JOptionPane.showInputDialog(this,"Input Path here");
-//            gameController.loadGameFromFile(path);
-//        });
-//    }
+        button.addActionListener((e) -> {
+            String out = this.chessboardComponent.getGameController().save();
+            try {
+                FileWriter fileWriter = new FileWriter("save.txt");
+                BufferedWriter writer = new BufferedWriter(fileWriter);
+                writer.write(out);
+                writer.close();
+                fileWriter.close();
+            } catch (IOException ee) {
+                ee.printStackTrace();
+            }
+        });
+    }
 
+    private void addLoadButton() {
+        JButton button = new JButton("Load");
+        button.setLocation(HEIGTH, HEIGTH / 10 + 360);
+        button.setSize(200, 60);
+        button.setFont(new Font("Rockwell", Font.BOLD, 20));
+        add(button);
+
+        button.addActionListener(e -> {
+            this.chessboardComponent.getGameController().load("save.txt");
+        });
+    }
+    public void refreshStatue(PlayerColor currentplayer, int rounds){
+        String out;
+        if(currentplayer == PlayerColor.BLUE)
+            out = "Current player: BLUE  Round: " + rounds;
+        else
+            out = "Current player: RED  Round: " + rounds;
+        JLabel label = new JLabel(out);
+        label.setLocation(160, 55);
+        label.setSize(300, 30);
+        label.setFont(new Font("Rockwell", Font.BOLD, 15));
+        add(label);
+    }
 
 }

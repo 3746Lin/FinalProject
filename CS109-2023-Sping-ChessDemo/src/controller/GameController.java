@@ -8,6 +8,9 @@ import view.*;
 import view.Component;
 
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -40,13 +43,57 @@ public class GameController implements GameListener {
         this.view = view;
         this.model = model;
         this.currentPlayer = PlayerColor.BLUE;
+
         view.registerController(this);
-        initialize();
         view.initiateChessComponent(model);
         view.repaint();
     }
 
-    public void initialize() {
+    public void clearChessboard() {
+        for (int i = 0; i < Constant.CHESSBOARD_ROW_SIZE.getNum(); i++) {
+            for (int j = 0; j < Constant.CHESSBOARD_COL_SIZE.getNum(); j++) {
+                ChessboardPoint point = new ChessboardPoint(i,j);
+                model.getGrid()[i][j].setPiece(null);
+                view.removeChessComponentAtGrid(point);
+            }
+        }
+    }
+
+    public String save(){
+        String out = "",temp;
+        out += currentPlayer == PlayerColor.BLUE?"BBB": "RRR";
+
+        for(int i=0;i<=8;i++){
+            for(int j=0;j<=6;j++){
+                ChessPiece temppiece = model.getGrid()[i][j].getPiece();
+                if(temppiece != null){
+                    temp = "";
+                    temp += (char)('a' + i - 4);temp += (char)('a' + j - 4);temp += (char)('a' + temppiece.getRank() - 4);
+                    temp += temppiece.getOwner() == PlayerColor.BLUE?6:4;
+                    out += temp;
+                }
+            }
+        }
+        return out;
+    }
+
+    public void load(String path){
+        try {
+            FileReader fileReader = new FileReader(path);
+            BufferedReader reader = new BufferedReader(fileReader);
+            String line = reader.readLine();
+            clearChessboard();
+            currentPlayer = line.substring(0,3).equals("BBB")?PlayerColor.BLUE:PlayerColor.RED;
+            for(int pos=3;pos<line.length();pos+=4){
+                model.addChessPiece(line.substring(pos, pos+4));
+                view.addChessComponent(line.substring(pos, pos+4));
+            }
+            view.repaint();
+            reader.close();
+            fileReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // after a valid move swap the player

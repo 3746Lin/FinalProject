@@ -1,6 +1,10 @@
 package model;
 
+import view.*;
+import view.Component;
+
 import java.awt.*;
+import java.util.HashSet;
 
 /**
  * This class store the real chess information.
@@ -8,6 +12,8 @@ import java.awt.*;
  */
 public class Chessboard {
     private Cell[][] grid;
+    private HashSet<ChessboardPoint> redTrapCell = new HashSet<>();
+    private HashSet<ChessboardPoint> blueTrapCell = new HashSet<>();
 
     public Chessboard() {
         this.grid =
@@ -27,6 +33,12 @@ public class Chessboard {
                 grid[i][j] = new Cell();
             }
         }
+        redTrapCell.add(new ChessboardPoint(0, 2));
+        redTrapCell.add(new ChessboardPoint(0, 4));
+        redTrapCell.add(new ChessboardPoint(1, 3));
+        blueTrapCell.add(new ChessboardPoint(8, 2));
+        blueTrapCell.add(new ChessboardPoint(8, 4));
+        blueTrapCell.add(new ChessboardPoint(7, 3));
     }
 
     private void initPieces() {
@@ -93,6 +105,23 @@ public class Chessboard {
         return getGridAt(point).getPiece().getOwner();
     }
 
+    public void addChessPiece(String str){
+        int i = (int)(str.charAt(0) - 'a') + 4,j = (int)(str.charAt(1) - 'a') + 4;
+        int rank = (int)(str.charAt(2) - 'a') + 4;
+        PlayerColor color = str.charAt(3) == '6' ? PlayerColor.BLUE : PlayerColor.RED;
+        String name = "";
+        switch (rank){
+            case 1 : name = "Rat";break;
+            case 2 : name = "Cat";break;
+            case 3 : name = "Dog";break;
+            case 4 : name = "Wolf";break;
+            case 5 : name = "Leopard";break;
+            case 6 : name = "Tiger";break;
+            case 7 : name = "Lion";break;
+            case 8 : name = "Elephant";break;
+        }
+        this.getGrid()[i][j].setPiece(new ChessPiece(color, name, rank));
+    }
     public boolean isValidMove(ChessboardPoint src, ChessboardPoint dest) {
         if(getChessPieceAt(src).getName()=="Lion"||getChessPieceAt(src).getName()=="Tiger"){
             int col = src.getCol(), row = src.getRow(), col2 = dest.getCol(), row2 = dest.getRow();
@@ -143,6 +172,10 @@ public class Chessboard {
 
 
     public boolean isValidCapture(ChessboardPoint src, ChessboardPoint dest) {
+        if(inRiver(dest) ^ inRiver(src))
+            return false;
+        ChessPiece caping = this.getChessPieceAt(src), caped = this.getChessPieceAt(dest);
+
         if(getChessPieceAt(src).getName()=="Lion"||getChessPieceAt(src).getName()=="Tiger"){
             int SpecialRow= src.getRow();
             int SpecialCol= src.getCol();
@@ -168,12 +201,29 @@ public class Chessboard {
                 return false;
             }
         }
-        if(getChessPieceAt(src).canCapture(getChessPieceAt(dest))&&!inRiver(dest)&&calculateDistance(src,dest)==1&&(getChessPieceAt(src).getOwner()!=getChessPieceAt(dest).getOwner())){
-            return true;
-        }else {
+
+        if(calculateDistance(src,dest) != 1)
             return false;
+        if(inRiver(dest) && inRiver(src))
+            return true;
+        PlayerColor current = this.getChessPieceOwner(src);
+        if(current == PlayerColor.RED){
+            for(ChessboardPoint temp:redTrapCell){
+                if(dest.equals(temp)){
+                    redTrapCell.remove(temp);
+                    return true;
+                }
+            }
+        } else {
+            for(ChessboardPoint temp:blueTrapCell){
+                if(dest.equals(temp)){
+                    blueTrapCell.remove(temp);
+                    return true;
+                }
+            }
         }
-        // TODO:Fix this method
+
+        return caping.canCapture(caped);
     }
     public ChessPiece CheckEmptyPoint(ChessboardPoint point){
         return getChessPieceAt(point);

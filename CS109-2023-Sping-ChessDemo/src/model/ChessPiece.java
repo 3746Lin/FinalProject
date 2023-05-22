@@ -34,7 +34,5 @@ public class ChessPiece {
         return owner;
     }
 
-    public void setRank(int rank) {
-        this.rank = rank;
-    }
+    public int getRank() {return this.rank;}
 }
