@@ -3,13 +3,20 @@ package view;
 
 import model.PlayerColor;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * This is the equivalent of the ChessPiece class,
  * but this class only cares how to draw Chess on ChessboardComponent
  */
 public class LionChessComponent extends Component {
+    private File RedLionFile=new File("CS109-2023-Sping-ChessDemo/resource/RedLion.png");
+    private File BlueLionFile=new File("CS109-2023-Sping-ChessDemo/resource/BlueLion.png");
+    private BufferedImage ImageOfLion;
     public LionChessComponent(PlayerColor owner, int size) {
         this.owner = owner;
         this.selected = false;
@@ -23,13 +30,23 @@ public class LionChessComponent extends Component {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        Font font = new Font("楷体", Font.PLAIN, getWidth() / 2);
-        g2.setFont(font);
-        g2.setColor(owner.getColor());
-        g2.drawString("狮", getWidth() / 4, getHeight() * 5 / 8); // FIXME: Use library to find the correct offset.
+        try {
+            if (this.owner.getColor()==PlayerColor.RED.getColor()) {
+                ImageOfLion = ImageIO.read(RedLionFile);
+            }else {
+                ImageOfLion = ImageIO.read(BlueLionFile);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        g2.drawImage(ImageOfLion,0,0,getWidth(),getHeight(),null);
         if (isSelected()) { // Highlights the model if selected.
-            g.setColor(Color.RED);
-            g.drawOval(5, 5, getWidth()-10 , getHeight()-10);
+            g2.setColor(new Color(255, 255, 0, 128));
+            g2.fillRect(0, 0, getWidth(), getHeight());
+        }
+        if (isCanBeSelected()) { // Highlights the model if selected.
+            g2.setColor(new Color(0, 255, 0, 128));
+            g2.fillRect(0, 0, getWidth(), getHeight());
         }
     }
 }

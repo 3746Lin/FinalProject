@@ -16,10 +16,10 @@ public class ChessPiece {
     }
 
     public boolean canCapture(ChessPiece target) {
-        if(this.rank==1&&target.rank==8){
+        if(this.rank==1&&target.rank==8&&this.getOwner()!=target.getOwner()){
             return true;
         }
-        if((this.rank>=target.rank)&&!(this.rank==8&&target.rank==1)){
+        if((this.rank>=target.rank)&&this.getOwner()!=target.getOwner()&&!(this.rank==8&&target.rank==1)){
             return true;
         } else {
             return false;

@@ -3,13 +3,20 @@ package view;
 
 import model.PlayerColor;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * This is the equivalent of the ChessPiece class,
  * but this class only cares how to draw Chess on ChessboardComponent
  */
 public class DogChessComponent extends Component {
+    private File RedDogFile=new File("CS109-2023-Sping-ChessDemo/resource/RedDog.png");
+    private File BlueDogFile=new File("CS109-2023-Sping-ChessDemo/resource/BlueDog.png");
+    private BufferedImage ImageOfDog;
     public DogChessComponent(PlayerColor owner, int size) {
         this.owner = owner;
         this.selected = false;
@@ -23,13 +30,23 @@ public class DogChessComponent extends Component {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        Font font = new Font("楷体", Font.PLAIN, getWidth() / 2);
-        g2.setFont(font);
-        g2.setColor(owner.getColor());
-        g2.drawString("狗", getWidth() / 4, getHeight() * 5 / 8); // FIXME: Use library to find the correct offset.
+        try {
+            if (this.owner.getColor()==PlayerColor.RED.getColor()) {
+                ImageOfDog = ImageIO.read(RedDogFile);
+            }else {
+                ImageOfDog = ImageIO.read(BlueDogFile);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        g2.drawImage(ImageOfDog,0,0,getWidth(),getHeight(),null);
         if (isSelected()) { // Highlights the model if selected.
-            g.setColor(Color.RED);
-            g.drawOval(5, 5, getWidth()-10 , getHeight()-10);
+            g2.setColor(new Color(255, 255, 0, 128));
+            g2.fillRect(0, 0, getWidth(), getHeight());
+        }
+        if (isCanBeSelected()) { // Highlights the model if selected.
+            g2.setColor(new Color(0, 255, 0, 128));
+            g2.fillRect(0, 0, getWidth(), getHeight());
         }
     }
 }

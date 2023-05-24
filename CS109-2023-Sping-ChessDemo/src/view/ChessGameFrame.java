@@ -4,6 +4,7 @@ import java.awt.event.ActionListener;
 
 import controller.GameController;
 import model.Chessboard;
+import model.ChessboardPoint;
 import model.PlayerColor;
 
 import javax.swing.*;
@@ -96,7 +97,7 @@ public class ChessGameFrame extends JFrame {
         button.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(button);
     }
-    public class RestartButtonClickListener implements ActionListener {
+    private class RestartButtonClickListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent arg0) {
                 SwingUtilities.invokeLater(() -> {
@@ -106,14 +107,15 @@ public class ChessGameFrame extends JFrame {
                 });
         }
     }
-    public void addBackground(){
+    private void addBackground(){
         ((JPanel)this.getContentPane()).setOpaque(false);
         ImageIcon image;
-        image = new ImageIcon("D:/ljz/Java/FinalProject/CS109-2023-Sping-ChessDemo/resource/background1.jpg");
+        image = new ImageIcon("CS109-2023-Sping-ChessDemo/resource/background.jpg");
         JLabel background = new JLabel(image);
-        this.getLayeredPane().add(background,new Integer(Integer.MIN_VALUE));
         background.setBounds(0,0,this.getWidth(),this.getHeight());
+        this.getLayeredPane().add(background,new Integer(Integer.MIN_VALUE));
     }
+
     public void addCurrentPlayerLabel() {
         if (chessboardComponent.getGameController() != null) {
             JLabel ResetStatusLabel = new JLabel("CurrentPlayer:"+chessboardComponent.getGameController().getCurrentPlayer().toString());

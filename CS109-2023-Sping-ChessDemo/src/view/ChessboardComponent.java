@@ -5,9 +5,13 @@ import controller.GameController;
 import model.Chessboard;
 import model.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,7 +29,6 @@ public class ChessboardComponent extends JComponent {
     private final Set<ChessboardPoint> Dens = new HashSet<>();
 
     private GameController gameController;
-    private boolean ChangeCurrentPlayer;
 
     public ChessboardComponent(int chessSize) {
         CHESS_SIZE = chessSize;
@@ -123,16 +126,16 @@ public class ChessboardComponent extends JComponent {
                 ChessboardPoint temp = new ChessboardPoint(i, j);
                 CellComponent cell;
                 if (riverCell.contains(temp)) {
-                    cell = new CellComponent(Color.CYAN, calculatePoint(i, j), CHESS_SIZE);
+                    cell = new RiverCellComponent(Color.CYAN, calculatePoint(i, j), CHESS_SIZE);
                     this.add(cell);
                 } else if(trapCell.contains(temp)){
-                    cell = new CellComponent(Color.RED, calculatePoint(i, j), CHESS_SIZE);
+                    cell = new TrapCellComponent(Color.RED, calculatePoint(i, j), CHESS_SIZE);
                     this.add(cell);
                 } else if(Dens.contains(temp)){
-                    cell = new CellComponent(Color.GREEN, calculatePoint(i, j), CHESS_SIZE);
+                    cell = new DensCellComponent(Color.GREEN, calculatePoint(i, j), CHESS_SIZE);
                     this.add(cell);
                 } else {
-                    cell = new CellComponent(Color.LIGHT_GRAY, calculatePoint(i, j), CHESS_SIZE);
+                    cell = new LandCellComponent(Color.LIGHT_GRAY, calculatePoint(i, j), CHESS_SIZE);
                     this.add(cell);
                 }
                 gridComponents[i][j] = cell;
@@ -147,6 +150,7 @@ public class ChessboardComponent extends JComponent {
     public void setChessComponentAtGrid(ChessboardPoint point, Component chess) {
         getGridComponentAt(point).add(chess);
     }
+
 
     public Component removeChessComponentAtGrid(ChessboardPoint point) {
         if(getGridComponentAt(point).getComponents().length == 0)
@@ -209,9 +213,6 @@ public class ChessboardComponent extends JComponent {
         }
     }
 
-    public int getCHESS_SIZE(){
-        return CHESS_SIZE;
-    }
 
     public GameController getGameController() {
         return gameController;
@@ -219,7 +220,5 @@ public class ChessboardComponent extends JComponent {
     public CellComponent getGridComponents(int i,int j){
         return gridComponents[i][j];
     }
-
-
 
 }

@@ -33,6 +33,8 @@ public class GameController implements GameListener {
     private int turn=1;
     private ArrayList<CellComponent> FirstCellComponentList=new ArrayList<>();
     private ArrayList<CellComponent> SecondCellComponentList=new ArrayList<>();
+    private ArrayList<Component> FirstComponentList=new ArrayList<>();
+    private ArrayList<Component> SecondComponentList=new ArrayList<>();
 
     // Record whether there is a selected piece before
     private ChessboardPoint selectedPoint;
@@ -134,9 +136,17 @@ public class GameController implements GameListener {
             }
             chessGameFrame.repaint();
             view.repaint();
-            for (int i=0;i<FirstCellComponentList.size();i++){
-                FirstCellComponentList.get(i).setSelected(false);
-                FirstCellComponentList.get(i).repaint();
+            if (FirstCellComponentList.size()!=0) {
+                for (CellComponent cellComponent : FirstCellComponentList) {
+                    cellComponent.setSelected(false);
+                    cellComponent.repaint();
+                }
+            }
+            if (FirstComponentList.size()!=0) {
+                for (Component value : FirstComponentList) {
+                    value.setCanBeSelected(false);
+                    value.repaint();
+                }
             }
             if(currentPlayer == PlayerColor.BLUE){
                 if(point.equals(new ChessboardPoint(8, 3))){
@@ -169,15 +179,17 @@ public class GameController implements GameListener {
                 for (int i=0;i<9;i++){
                     for (int j=0;j<7;j++){
                         ChessboardPoint TempPoint=new ChessboardPoint(i,j);
-                        if(TempPoint!=point){
+                        if(!TempPoint.equals(point)){
                             if (model.isValidMove(point,TempPoint)){
                                 view.getGridComponents(i,j).setSelected(true);
                                 view.getGridComponents(i,j).repaint();
                                 FirstCellComponentList.add(view.getGridComponents(i,j));
                             }if (model.CheckEmptyPoint(TempPoint)!=null&&model.isValidCapture(point,TempPoint)){
-                                view.getGridComponents(i,j).setSelected(true);
-                                view.getGridComponents(i,j).repaint();
-                                FirstCellComponentList.add(view.getGridComponents(i,j));
+                                if (view.getGridComponents(i,j).getComponent(0)!=null&&view.getGridComponents(i,j).getComponent(0)instanceof Component){
+                                    ((Component) view.getGridComponents(i,j).getComponent(0)).setCanBeSelected(true);
+                                    ((Component) view.getGridComponents(i,j).getComponent(0)).repaint();
+                                    FirstComponentList.add(((Component) view.getGridComponents(i,j).getComponent(0)));
+                                }
                             }
                         }
 
@@ -204,9 +216,17 @@ public class GameController implements GameListener {
                 }
                 chessGameFrame.repaint();
                 view.repaint();
-                for (int i=0;i<FirstCellComponentList.size();i++){
-                    FirstCellComponentList.get(i).setSelected(false);
-                    FirstCellComponentList.get(i).repaint();
+                if (FirstCellComponentList.size()!=0) {
+                    for (CellComponent cellComponent : FirstCellComponentList) {
+                        cellComponent.setSelected(false);
+                        cellComponent.repaint();
+                    }
+                }
+                if (FirstComponentList.size()!=0) {
+                    for (Component value : FirstComponentList) {
+                        value.setCanBeSelected(false);
+                        value.repaint();
+                    }
                 }
                 win();
             }
@@ -214,16 +234,32 @@ public class GameController implements GameListener {
             selectedPoint = null;
             component.setSelected(false);
             component.repaint();
-            for (int i=0;i<FirstCellComponentList.size();i++){
-                FirstCellComponentList.get(i).setSelected(false);
-                FirstCellComponentList.get(i).repaint();
+            if (FirstCellComponentList.size()!=0) {
+                for (CellComponent cellComponent : FirstCellComponentList) {
+                    cellComponent.setSelected(false);
+                    cellComponent.repaint();
+                }
+            }
+            if (FirstComponentList.size()!=0) {
+                for (Component value : FirstComponentList) {
+                    value.setCanBeSelected(false);
+                    value.repaint();
+                }
             }
         } else if (model.getChessPieceOwner(point).equals(currentPlayer)) {
             component1.setSelected(false);
             component1.repaint();
-            for (int i=0;i<FirstCellComponentList.size();i++){
-                FirstCellComponentList.get(i).setSelected(false);
-                FirstCellComponentList.get(i).repaint();
+            if (FirstCellComponentList.size()!=0) {
+                for (CellComponent cellComponent : FirstCellComponentList) {
+                    cellComponent.setSelected(false);
+                    cellComponent.repaint();
+                }
+            }
+            if (FirstComponentList.size()!=0) {
+                for (Component value : FirstComponentList) {
+                    value.setCanBeSelected(false);
+                    value.repaint();
+                }
             }
             component2=component;
             selectedPoint=point;
@@ -238,15 +274,18 @@ public class GameController implements GameListener {
                             view.getGridComponents(i,j).repaint();
                             SecondCellComponentList.add(view.getGridComponents(i,j));
                         }if (model.CheckEmptyPoint(TempPoint)!=null&&model.isValidCapture(point,TempPoint)){
-                            view.getGridComponents(i,j).setSelected(true);
-                            view.getGridComponents(i,j).repaint();
-                            SecondCellComponentList.add(view.getGridComponents(i,j));
+                            if (view.getGridComponents(i,j).getComponent(0)!=null&&view.getGridComponents(i,j).getComponent(0)instanceof Component){
+                                ((Component) view.getGridComponents(i,j).getComponent(0)).setCanBeSelected(true);
+                                ((Component) view.getGridComponents(i,j).getComponent(0)).repaint();
+                                SecondComponentList.add(((Component) view.getGridComponents(i,j).getComponent(0)));
+                            }
                         }
                     }
 
                 }
             }
             FirstCellComponentList=SecondCellComponentList;
+            FirstComponentList=SecondComponentList;
             component1=component2;
         }
         // TODO: Implement capture function
@@ -263,5 +302,4 @@ public class GameController implements GameListener {
     public ChessGameFrame getChessGameFrame(){
         return chessGameFrame;
     }
-
 }
