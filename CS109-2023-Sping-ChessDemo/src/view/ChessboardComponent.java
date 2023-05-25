@@ -5,13 +5,9 @@ import controller.GameController;
 import model.Chessboard;
 import model.*;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,7 +22,9 @@ public class ChessboardComponent extends JComponent {
     private final int CHESS_SIZE;
     private final Set<ChessboardPoint> riverCell = new HashSet<>();
     private final Set<ChessboardPoint> trapCell = new HashSet<>();
-    private final Set<ChessboardPoint> Dens = new HashSet<>();
+    private final Set<ChessboardPoint> RedDens = new HashSet<>();
+    private final Set<ChessboardPoint> BlueDens = new HashSet<>();
+
 
     private GameController gameController;
 
@@ -118,8 +116,8 @@ public class ChessboardComponent extends JComponent {
         trapCell.add(new ChessboardPoint(8, 4));
         trapCell.add(new ChessboardPoint(7, 3));
 
-        Dens.add(new ChessboardPoint(0, 3));
-        Dens.add(new ChessboardPoint(8, 3));
+        RedDens.add(new ChessboardPoint(0, 3));
+        BlueDens.add(new ChessboardPoint(8, 3));
 
         for (int i = 0; i < CHESSBOARD_ROW_SIZE.getNum(); i++) {
             for (int j = 0; j < CHESSBOARD_COL_SIZE.getNum(); j++) {
@@ -131,8 +129,11 @@ public class ChessboardComponent extends JComponent {
                 } else if(trapCell.contains(temp)){
                     cell = new TrapCellComponent(Color.RED, calculatePoint(i, j), CHESS_SIZE);
                     this.add(cell);
-                } else if(Dens.contains(temp)){
-                    cell = new DensCellComponent(Color.GREEN, calculatePoint(i, j), CHESS_SIZE);
+                } else if(RedDens.contains(temp)){
+                    cell = new RedDensCellComponent(Color.GREEN, calculatePoint(i, j), CHESS_SIZE);
+                    this.add(cell);
+                } else if(BlueDens.contains(temp)){
+                    cell = new BlueDensCellComponent(Color.GREEN, calculatePoint(i, j), CHESS_SIZE);
                     this.add(cell);
                 } else {
                     cell = new LandCellComponent(Color.LIGHT_GRAY, calculatePoint(i, j), CHESS_SIZE);
@@ -250,5 +251,4 @@ public class ChessboardComponent extends JComponent {
     public CellComponent getGridComponents(int i,int j){
         return gridComponents[i][j];
     }
-
 }

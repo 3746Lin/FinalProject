@@ -258,8 +258,8 @@ public class GameController implements GameListener {
                 selectedPoint = point;
                 component1.setSelected(true);
                 component1.repaint();
-                for (int i=0;i<9;i++){
-                    for (int j=0;j<7;j++){
+                for (int i=0;i<Constant.CHESSBOARD_ROW_SIZE.getNum();i++){
+                    for (int j=0;j<Constant.CHESSBOARD_COL_SIZE.getNum();j++){
                         ChessboardPoint TempPoint=new ChessboardPoint(i,j);
                         if(!TempPoint.equals(point)){
                             if (model.isValidMove(point,TempPoint)){
@@ -381,16 +381,43 @@ public class GameController implements GameListener {
         }
         // TODO: Implement capture function
     }
+    public void resetTurnAndCurrentPlayer(){
+        chessGameFrame.addCurrentPlayerLabel();
+        chessGameFrame.addTurnLabel();
+    }
     public Chessboard getChessboard(){
         return model;
     }
     public PlayerColor getCurrentPlayer(){
         return currentPlayer;
     }
+    public void setCurrentPlayer(PlayerColor playerColor){
+        if (playerColor==PlayerColor.BLUE){
+            this.currentPlayer=playerColor;
+        }else {
+            this.currentPlayer=PlayerColor.RED;
+        }
+    }
     public int getTurn(){
         return turn;
     }
+    public void setTurn(int turn){
+        this.turn=turn;
+    }
     public ChessGameFrame getChessGameFrame(){
         return chessGameFrame;
+    }
+    public void RepaintAll(int style){
+        for (int i=0;i<Constant.CHESSBOARD_ROW_SIZE.getNum();i++){
+            for (int j=0;j<Constant.CHESSBOARD_COL_SIZE.getNum();j++) {
+                ChessboardPoint TempPoint=new ChessboardPoint(i,j);
+                view.getGridComponents(i,j).setStyle(style);
+                view.getGridComponents(i,j).repaint();
+                if(model.CheckEmptyPoint(TempPoint)!=null&&view.getGridComponents(i,j).getComponent(0)!=null&&view.getGridComponents(i,j).getComponent(0)instanceof Component){
+                    ((Component) view.getGridComponents(i,j).getComponent(0)).setStyle(style);
+                    ((Component) view.getGridComponents(i,j).getComponent(0)).repaint();
+                }
+            }
+        }
     }
 }

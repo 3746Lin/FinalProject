@@ -15,9 +15,12 @@ import java.io.IOException;
  * but this class only cares how to draw Chess on ChessboardComponent
  */
 public class WolfChessComponent extends Component {
-    private File RedWolfFile=new File("CS109-2023-Sping-ChessDemo/resource/RedWolf.png");
-    private File BlueWolfFile=new File("CS109-2023-Sping-ChessDemo/resource/BlueWolf.png");
+    private File RedWolfFile1=new File("CS109-2023-Sping-ChessDemo/resource/RedWolf.png");
+    private File BlueWolfFile1=new File("CS109-2023-Sping-ChessDemo/resource/BlueWolf.png");
+    private File RedWolfFile2=new File("CS109-2023-Sping-ChessDemo/resource/灰二太太狼.png");
+    private File BlueWolfFile2=new File("CS109-2023-Sping-ChessDemo/resource/懒羊羊.png");
     private BufferedImage ImageOfWolf;
+    private int style=1;
     public WolfChessComponent(PlayerColor owner, int size) {
         this.owner = owner;
         this.selected = false;
@@ -33,9 +36,17 @@ public class WolfChessComponent extends Component {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         try {
             if (this.owner.getColor()==PlayerColor.RED.getColor()) {
-                ImageOfWolf = ImageIO.read(RedWolfFile);
+                if (style==1) {
+                    ImageOfWolf = ImageIO.read(RedWolfFile1);
+                }else if (style==2){
+                    ImageOfWolf = ImageIO.read(RedWolfFile2);
+                }
             }else {
-                ImageOfWolf = ImageIO.read(BlueWolfFile);
+                if (style==1) {
+                    ImageOfWolf = ImageIO.read(BlueWolfFile1);
+                }else if (style==2){
+                    ImageOfWolf = ImageIO.read(BlueWolfFile2);
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -50,5 +61,7 @@ public class WolfChessComponent extends Component {
             g2.fillRect(0, 0, getWidth(), getHeight());
         }
     }
-
+    public void setStyle(int style){
+        this.style=style;
+    }
 }

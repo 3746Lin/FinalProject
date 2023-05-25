@@ -14,9 +14,12 @@ import java.io.IOException;
  * but this class only cares how to draw Chess on ChessboardComponent
  */
 public class TigerChessComponent extends Component {
-    private File RedTigerFile=new File("CS109-2023-Sping-ChessDemo/resource/RedTiger.png");
-    private File BlueTigerFile=new File("CS109-2023-Sping-ChessDemo/resource/BlueTiger.png");
+    private File RedTigerFile1=new File("CS109-2023-Sping-ChessDemo/resource/RedTiger.png");
+    private File BlueTigerFile1=new File("CS109-2023-Sping-ChessDemo/resource/BlueTiger.png");
+    private File RedTigerFile2=new File("CS109-2023-Sping-ChessDemo/resource/红太狼.png");
+    private File BlueTigerFile2=new File("CS109-2023-Sping-ChessDemo/resource/沸羊羊.png");
     private BufferedImage ImageOfTiger;
+    private int style=1;
     public TigerChessComponent(PlayerColor owner, int size) {
         this.owner = owner;
         this.selected = false;
@@ -32,9 +35,17 @@ public class TigerChessComponent extends Component {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         try {
             if (this.owner.getColor()==PlayerColor.RED.getColor()) {
-                ImageOfTiger = ImageIO.read(RedTigerFile);
+                if (style==1) {
+                    ImageOfTiger = ImageIO.read(RedTigerFile1);
+                }else if (style==2){
+                    ImageOfTiger = ImageIO.read(RedTigerFile2);
+                }
             }else {
-                ImageOfTiger = ImageIO.read(BlueTigerFile);
+                if (style==1) {
+                    ImageOfTiger = ImageIO.read(BlueTigerFile1);
+                }else if (style==2){
+                    ImageOfTiger = ImageIO.read(BlueTigerFile2);
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -48,5 +59,8 @@ public class TigerChessComponent extends Component {
             g2.setColor(new Color(0, 255, 0, 128));
             g2.fillRect(0, 0, getWidth(), getHeight());
         }
+    }
+    public void setStyle(int style){
+        this.style=style;
     }
 }
