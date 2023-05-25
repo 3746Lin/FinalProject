@@ -9,7 +9,6 @@ public class Component extends JComponent {
 
     protected boolean selected;
     protected boolean canBeSelected;
-    private int style=1;
     public boolean isSelected() {
         return selected;
     }
@@ -22,8 +21,5 @@ public class Component extends JComponent {
     }
     public void setCanBeSelected(boolean canBeSelected) {
         this.canBeSelected = canBeSelected;
-    }
-    public void setStyle(int style){
-        this.style=style;
     }
 }

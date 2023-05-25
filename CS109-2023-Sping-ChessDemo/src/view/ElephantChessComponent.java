@@ -18,12 +18,9 @@ import java.io.IOException;
  * but this class only cares how to draw Chess on ChessboardComponent
  */
 public class ElephantChessComponent extends Component {
-    private File RedElephantFile1=new File("CS109-2023-Sping-ChessDemo/resource/RedElephant.png");
-    private File BlueElephantFile1=new File("CS109-2023-Sping-ChessDemo/resource/BlueElephant.png");
-    private File RedElephantFile2=new File("CS109-2023-Sping-ChessDemo/resource/黑大帅.jpg");
-    private File BlueElephantFile2=new File("CS109-2023-Sping-ChessDemo/resource/包包大人.png");
+    private File RedElephantFile=new File("CS109-2023-Sping-ChessDemo/resource/RedElephant.png");
+    private File BlueElephantFile=new File("CS109-2023-Sping-ChessDemo/resource/BlueElephant.png");
     private BufferedImage ImageOfElephant;
-    private int style=1;
     public ElephantChessComponent(PlayerColor owner, int size) {
         this.owner = owner;
         this.selected = false;
@@ -39,17 +36,9 @@ public class ElephantChessComponent extends Component {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         try {
             if (this.owner.getColor()==PlayerColor.RED.getColor()) {
-                if (style==1) {
-                    ImageOfElephant = ImageIO.read(RedElephantFile1);
-                }else if (style==2){
-                    ImageOfElephant = ImageIO.read(RedElephantFile2);
-                }
+                ImageOfElephant = ImageIO.read(RedElephantFile);
             }else {
-                if (style==1) {
-                    ImageOfElephant = ImageIO.read(BlueElephantFile1);
-                }else if (style==2){
-                    ImageOfElephant = ImageIO.read(BlueElephantFile2);
-                }
+                ImageOfElephant = ImageIO.read(BlueElephantFile);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -63,8 +52,5 @@ public class ElephantChessComponent extends Component {
             g2.setColor(new Color(0, 255, 0, 128));
             g2.fillRect(0, 0, getWidth(), getHeight());
         }
-    }
-    public void setStyle(int style){
-        this.style=style;
     }
 }

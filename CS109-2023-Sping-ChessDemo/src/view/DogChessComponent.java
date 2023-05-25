@@ -14,12 +14,9 @@ import java.io.IOException;
  * but this class only cares how to draw Chess on ChessboardComponent
  */
 public class DogChessComponent extends Component {
-    private File RedDogFile1=new File("CS109-2023-Sping-ChessDemo/resource/RedDog.png");
-    private File BlueDogFile1=new File("CS109-2023-Sping-ChessDemo/resource/BlueDog.png");
-    private File RedDogFile2=new File("CS109-2023-Sping-ChessDemo/resource/巫师狼.png");
-    private File BlueDogFile2=new File("CS109-2023-Sping-ChessDemo/resource/暖羊羊.png");
+    private File RedDogFile=new File("CS109-2023-Sping-ChessDemo/resource/RedDog.png");
+    private File BlueDogFile=new File("CS109-2023-Sping-ChessDemo/resource/BlueDog.png");
     private BufferedImage ImageOfDog;
-    private int style=1;
     public DogChessComponent(PlayerColor owner, int size) {
         this.owner = owner;
         this.selected = false;
@@ -35,17 +32,9 @@ public class DogChessComponent extends Component {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         try {
             if (this.owner.getColor()==PlayerColor.RED.getColor()) {
-                if (style==1) {
-                    ImageOfDog = ImageIO.read(RedDogFile1);
-                }else if (style==2){
-                    ImageOfDog = ImageIO.read(RedDogFile2);
-                }
+                ImageOfDog = ImageIO.read(RedDogFile);
             }else {
-                if (style==1) {
-                    ImageOfDog = ImageIO.read(BlueDogFile1);
-                }else if (style==2){
-                    ImageOfDog = ImageIO.read(BlueDogFile2);
-                }
+                ImageOfDog = ImageIO.read(BlueDogFile);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -59,8 +48,5 @@ public class DogChessComponent extends Component {
             g2.setColor(new Color(0, 255, 0, 128));
             g2.fillRect(0, 0, getWidth(), getHeight());
         }
-    }
-    public void setStyle(int style){
-        this.style=style;
     }
 }

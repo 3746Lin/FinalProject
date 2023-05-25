@@ -14,12 +14,9 @@ import java.io.IOException;
  * but this class only cares how to draw Chess on ChessboardComponent
  */
 public class LionChessComponent extends Component {
-    private File RedLionFile1=new File("CS109-2023-Sping-ChessDemo/resource/RedLion.png");
-    private File BlueLionFile1=new File("CS109-2023-Sping-ChessDemo/resource/BlueLion.png");
-    private File RedLionFile2=new File("CS109-2023-Sping-ChessDemo/resource/灰太狼.png");
-    private File BlueLionFile2=new File("CS109-2023-Sping-ChessDemo/resource/喜羊羊.png");
+    private File RedLionFile=new File("CS109-2023-Sping-ChessDemo/resource/RedLion.png");
+    private File BlueLionFile=new File("CS109-2023-Sping-ChessDemo/resource/BlueLion.png");
     private BufferedImage ImageOfLion;
-    private int style=1;
     public LionChessComponent(PlayerColor owner, int size) {
         this.owner = owner;
         this.selected = false;
@@ -35,17 +32,9 @@ public class LionChessComponent extends Component {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         try {
             if (this.owner.getColor()==PlayerColor.RED.getColor()) {
-                if (style==1) {
-                    ImageOfLion = ImageIO.read(RedLionFile1);
-                }else if (style==2){
-                    ImageOfLion = ImageIO.read(RedLionFile2);
-                }
+                ImageOfLion = ImageIO.read(RedLionFile);
             }else {
-                if (style==1) {
-                    ImageOfLion = ImageIO.read(BlueLionFile1);
-                }else if (style==2){
-                    ImageOfLion = ImageIO.read(BlueLionFile2);
-                }
+                ImageOfLion = ImageIO.read(BlueLionFile);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -59,8 +48,5 @@ public class LionChessComponent extends Component {
             g2.setColor(new Color(0, 255, 0, 128));
             g2.fillRect(0, 0, getWidth(), getHeight());
         }
-    }
-    public void setStyle(int style){
-        this.style=style;
     }
 }

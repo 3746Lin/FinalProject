@@ -11,7 +11,6 @@ import java.awt.*;
 public class CellComponent extends JPanel {
     protected Color background;
     protected boolean isSelected;
-    private int style=1;
 
     public CellComponent(Color background, Point location, int size) {
         setLayout(new GridLayout(1,1));
@@ -32,8 +31,5 @@ public class CellComponent extends JPanel {
     }
     public void setSelected(boolean b){
         this.isSelected=b;
-    }
-    public void setStyle(int style){
-        this.style=style;
     }
 }

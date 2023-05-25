@@ -7,10 +7,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class TrapCellComponent extends CellComponent {
-    private File TrapFile1=new File("CS109-2023-Sping-ChessDemo/resource/Trap.png");
-    private File TrapFile2=new File("CS109-2023-Sping-ChessDemo/resource/陷阱.png");
+    private File TrapFile=new File("CS109-2023-Sping-ChessDemo/resource/Trap.png");
     private BufferedImage ImageOfTrap;
-    private int style=1;
     private boolean hasWorked;
     public TrapCellComponent(Color background, Point location, int size) {
         super(background, location, size);
@@ -22,11 +20,7 @@ public class TrapCellComponent extends CellComponent {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         try {
-            if (style==1) {
-                ImageOfTrap = ImageIO.read(TrapFile1);
-            }else if (style==2){
-                ImageOfTrap = ImageIO.read(TrapFile2);
-            }
+            ImageOfTrap= ImageIO.read(TrapFile);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -39,8 +33,5 @@ public class TrapCellComponent extends CellComponent {
             g2.setColor(new Color(0, 255, 0, 100));
             g2.fillRect(0, 0, getWidth(), getHeight());
         }
-    }
-    public void setStyle(int style){
-        this.style=style;
     }
 }
