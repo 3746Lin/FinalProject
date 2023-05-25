@@ -47,6 +47,7 @@ public class ChessGameFrame extends JFrame {
         addInitialButton();
         addTurnLabel();
         addCurrentPlayerLabel();
+        addRegretButton();
     }
 
     public ChessboardComponent getChessboardComponent() {
@@ -104,6 +105,8 @@ public class ChessGameFrame extends JFrame {
                     chessboardComponent.getGameController().clearChessboard();
                     chessboardComponent.registerController(new GameController(chessboardComponent, new Chessboard(),chessboardComponent.getGameController().getChessGameFrame()));
                     chessboardComponent.repaint();
+                    addTurnLabel();
+                    addCurrentPlayerLabel();
                 });
         }
     }
@@ -169,6 +172,18 @@ public class ChessGameFrame extends JFrame {
 
         button.addActionListener(e -> {
             this.chessboardComponent.getGameController().load("save.txt");
+        });
+    }
+
+    private void addRegretButton() {
+        JButton button = new JButton("Regret");
+        button.setLocation(HEIGTH-25, HEIGTH / 10 + 440);
+        button.setSize(250, 60);
+        button.setFont(new Font("Rockwell", Font.BOLD, 20));
+        add(button);
+
+        button.addActionListener(e -> {
+            this.chessboardComponent.getGameController().regret();
         });
     }
 

@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Controller is the connection between model and view,
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 */
 public class GameController implements GameListener {
 
-
+    private List<String> Steps;
     private Chessboard model;
     private ChessboardComponent view;
     private PlayerColor currentPlayer;
@@ -46,6 +47,8 @@ public class GameController implements GameListener {
         this.model = model;
         this.chessGameFrame=chessGameFrame;
         this.currentPlayer = PlayerColor.BLUE;
+        this.Steps = new ArrayList<String>();
+        this.Steps.add("000000");
 
         view.registerController(this);
         view.initiateChessComponent(model);
@@ -71,11 +74,16 @@ public class GameController implements GameListener {
                 ChessPiece temppiece = model.getGrid()[i][j].getPiece();
                 if(temppiece != null){
                     temp = "";
-                    temp += (char)('a' + i - 4);temp += (char)('a' + j - 4);temp += (char)('a' + temppiece.getRank() - 4);
+                    temp += (char)('a' + i);temp += (char)('a' + j);temp += (char)('a' + temppiece.getRank());
                     temp += temppiece.getOwner() == PlayerColor.BLUE?6:4;
                     out += temp;
                 }
             }
+        }
+        out += "\n";
+
+        for(String i:Steps){
+            out += i; out += "\n";
         }
         return out;
     }
@@ -92,6 +100,11 @@ public class GameController implements GameListener {
                 view.addChessComponent(line.substring(pos, pos+4));
             }
             view.repaint();
+
+            while ((line = reader.readLine()) != null) {
+                this.Steps.add(line);
+            }
+
             reader.close();
             fileReader.close();
         } catch (IOException e) {
@@ -99,6 +112,55 @@ public class GameController implements GameListener {
         }
     }
 
+    public void regret(){
+        int length = this.Steps.size();
+        String temp = this.Steps.get(length-1);
+        if(temp == "000000")
+            return;
+
+        this.Steps.remove(length-1);
+        int old_row = temp.charAt(0) - '0', old_col = temp.charAt(1) - '0';
+        int new_row = temp.charAt(2) - '0', new_col = temp.charAt(3) - '0';
+        ChessboardPoint old_point = new ChessboardPoint(old_row, old_col), new_point = new ChessboardPoint(new_row, new_col);
+        int rank = temp.charAt(5) - '0';
+        String name = "";
+        switch (rank){
+            case 0:break;
+            case 1:name = "Rat";break;
+            case 2:name = "Cat";break;
+            case 3:name = "Dog";break;
+            case 4:name = "Wolf";break;
+            case 5:name = "Leopard";break;
+            case 6:name = "Tiger";break;
+            case 7:name = "Lion";break;
+            case 8:name = "Elephant";break;
+        }
+
+        model.moveChessPiece(new_point, old_point);
+        view.setChessComponentAtGrid(old_point, view.removeChessComponentAtGrid(new_point));
+        selectedPoint = null;
+        switch(temp.charAt(4) - '0'){
+            case 0:break;
+            case 1://还原陷阱
+                model.addTrap(new_point, currentPlayer);
+                view.addTrap(new_point);
+                break;
+            case 2://还原棋子
+                ChessPiece chessPiece = new ChessPiece(currentPlayer, name, rank);
+                model.getGrid()[new_row][new_col].setPiece(chessPiece);
+                view.addComponent(new_point, rank, currentPlayer);
+                break;
+        }
+        view.repaint();
+
+        currentPlayer = currentPlayer == PlayerColor.BLUE? PlayerColor.RED : PlayerColor.BLUE;
+        chessGameFrame.addCurrentPlayerLabel();
+        if (currentPlayer.getColor()==Color.RED){
+            turn--;
+            chessGameFrame.addTurnLabel();
+        }
+        chessGameFrame.repaint();
+    }
     // after a valid move swap the player
     private void swapColor() {
         currentPlayer = currentPlayer == PlayerColor.BLUE ? PlayerColor.RED : PlayerColor.BLUE;
@@ -117,14 +179,34 @@ public class GameController implements GameListener {
         return false;
     }
 
-
-    // click an empty cell
+    private String addMovement(ChessboardPoint point){
+        /*以一个六位的数字字符串代表移动，其中前两位为起始点的行列，中两位为终点的行列，后两位为特殊事件标记
+        特殊事件包含：进入陷阱，吃子。进入陷阱标记为10，吃子标记为2 + 被吃子的等级。
+         */
+        String temp = "";
+        int row = point.getRow(),col = point.getCol();
+        temp += selectedPoint.getRow(); temp += selectedPoint.getCol();
+        temp += row; temp += col;
+        if(model.inTrap(point,currentPlayer)){
+            temp += "10";
+        } else if(model.getGrid()[row][col].getPiece() != null){
+            temp += "2"; temp += model.getGrid()[row][col].getPiece().getRank();
+        }else
+            temp += "00";
+        System.out.println(temp);
+        return temp;
+    }
     @Override
     public void onPlayerClickCell(ChessboardPoint point, CellComponent component) {
         if (win()){
             return;
         }
         if (selectedPoint != null && model.isValidMove(selectedPoint, point)) {
+            Steps.add(addMovement(point));
+            if(model.inTrap(selectedPoint, currentPlayer)){
+                model.removeTrap(selectedPoint);
+                view.removeTrap(selectedPoint);
+            }
             model.moveChessPiece(selectedPoint, point);
             view.setChessComponentAtGrid(point, view.removeChessComponentAtGrid(selectedPoint));
             selectedPoint = null;
@@ -198,6 +280,15 @@ public class GameController implements GameListener {
             }
         }else if(model.getChessPieceOwner(point) != model.getChessPieceOwner(selectedPoint)) {
             if (model.isValidCapture(selectedPoint, point)) {
+                if(model.inTrap(selectedPoint, currentPlayer)){
+                    model.removeTrap(selectedPoint);
+                    view.removeTrap(selectedPoint);
+                }
+                if(model.inTrap(point, currentPlayer == PlayerColor.BLUE? PlayerColor.RED : PlayerColor.BLUE)){
+                    model.removeTrap(selectedPoint);
+                    view.removeTrap(selectedPoint);
+                }
+                Steps.add(addMovement(point));
                 if (model.getChessPieceOwner(point).getColor()==Color.RED){
                     CountRedChess--;
                 }

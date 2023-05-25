@@ -27,6 +27,24 @@ public class Chessboard {
                 &&  (point.getRow() >= 3 && point.getRow() <= 5) );
     }
 
+    public boolean inTrap(ChessboardPoint point,PlayerColor color){
+        if(color == PlayerColor.RED)
+            return blueTrapCell.contains(point);
+        else
+            return redTrapCell.contains(point);
+    }
+    public void addTrap(ChessboardPoint point, PlayerColor color){
+        if(color == PlayerColor.RED)
+            blueTrapCell.add(point);
+        if(color == PlayerColor.BLUE)
+            redTrapCell.add(point);
+    }
+    public void removeTrap(ChessboardPoint point){
+        if(blueTrapCell.contains(point))
+            blueTrapCell.remove(point);
+        if(redTrapCell.contains(point))
+            redTrapCell.remove(point);
+    }
     private void initGrid() {
         for (int i = 0; i < Constant.CHESSBOARD_ROW_SIZE.getNum(); i++) {
             for (int j = 0; j < Constant.CHESSBOARD_COL_SIZE.getNum(); j++) {
@@ -106,8 +124,8 @@ public class Chessboard {
     }
 
     public void addChessPiece(String str){
-        int i = (int)(str.charAt(0) - 'a') + 4,j = (int)(str.charAt(1) - 'a') + 4;
-        int rank = (int)(str.charAt(2) - 'a') + 4;
+        int i = (int)(str.charAt(0) - 'a'),j = (int)(str.charAt(1) - 'a');
+        int rank = (int)(str.charAt(2) - 'a');
         PlayerColor color = str.charAt(3) == '6' ? PlayerColor.BLUE : PlayerColor.RED;
         String name = "";
         switch (rank){
@@ -123,6 +141,7 @@ public class Chessboard {
         this.getGrid()[i][j].setPiece(new ChessPiece(color, name, rank));
     }
     public boolean isValidMove(ChessboardPoint src, ChessboardPoint dest) {
+
         if(getChessPieceAt(src).getName()=="Lion"||getChessPieceAt(src).getName()=="Tiger"){
             int col = src.getCol(), row = src.getRow(), col2 = dest.getCol(), row2 = dest.getRow();
             if(col == col2)
@@ -210,14 +229,12 @@ public class Chessboard {
         if(current == PlayerColor.RED){
             for(ChessboardPoint temp:redTrapCell){
                 if(dest.equals(temp)){
-                    redTrapCell.remove(temp);
                     return true;
                 }
             }
         } else {
             for(ChessboardPoint temp:blueTrapCell){
                 if(dest.equals(temp)){
-                    blueTrapCell.remove(temp);
                     return true;
                 }
             }

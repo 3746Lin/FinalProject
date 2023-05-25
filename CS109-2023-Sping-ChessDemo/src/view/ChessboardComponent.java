@@ -151,6 +151,28 @@ public class ChessboardComponent extends JComponent {
         getGridComponentAt(point).add(chess);
     }
 
+    public void addComponent(ChessboardPoint point, int rank, PlayerColor color){
+        int row = point.getRow(), col = point.getCol();
+        switch (rank){
+            case 0:break;
+            case 1:gridComponents[row][col].add(
+                    new RatChessComponent(color, CHESS_SIZE));break;
+            case 2:gridComponents[row][col].add(
+                    new CatChessComponent(color, CHESS_SIZE));break;
+            case 3:gridComponents[row][col].add(
+                    new DogChessComponent(color, CHESS_SIZE));break;
+            case 4:gridComponents[row][col].add(
+                    new WolfChessComponent(color, CHESS_SIZE));break;
+            case 5:gridComponents[row][col].add(
+                    new LeopardChessComponent(color, CHESS_SIZE));break;
+            case 6:gridComponents[row][col].add(
+                    new TigerChessComponent(color, CHESS_SIZE));break;
+            case 7:gridComponents[row][col].add(
+                    new LionChessComponent(color, CHESS_SIZE));break;
+            case 8:gridComponents[row][col].add(
+                    new ElephantChessComponent(color, CHESS_SIZE));break;
+        }
+    }
 
     public Component removeChessComponentAtGrid(ChessboardPoint point) {
         if(getGridComponentAt(point).getComponents().length == 0)
@@ -164,8 +186,8 @@ public class ChessboardComponent extends JComponent {
     }
 
     public void addChessComponent(String str){
-        int i = (int)(str.charAt(0) - 'a') + 4,j = (int)(str.charAt(1) - 'a') + 4;
-        int rank = (int)(str.charAt(2) - 'a') + 4;
+        int i = (int)(str.charAt(0) - 'a'),j = (int)(str.charAt(1) - 'a');
+        int rank = (int)(str.charAt(2) - 'a');
         PlayerColor color = str.charAt(3) == '6' ? PlayerColor.BLUE : PlayerColor.RED;
         Component piececomponent = null;
         switch (rank){
@@ -179,6 +201,15 @@ public class ChessboardComponent extends JComponent {
             case 8 : piececomponent = new ElephantChessComponent(color,CHESS_SIZE);break;
         }
         this.setChessComponentAtGrid(new ChessboardPoint(i,j), piececomponent);
+    }
+
+    public void addTrap(ChessboardPoint point){
+        this.trapCell.add(point);
+        this.gridComponents[point.getRow()][point.getCol()].revalidate();
+    }
+    public void removeTrap(ChessboardPoint point){
+        this.trapCell.remove(point);
+        this.gridComponents[point.getRow()][point.getCol()].revalidate();
     }
     private CellComponent getGridComponentAt(ChessboardPoint point) {
         return gridComponents[point.getRow()][point.getCol()];
@@ -212,7 +243,6 @@ public class ChessboardComponent extends JComponent {
             }
         }
     }
-
 
     public GameController getGameController() {
         return gameController;
