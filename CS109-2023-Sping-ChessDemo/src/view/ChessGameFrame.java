@@ -177,7 +177,7 @@ public class ChessGameFrame extends JFrame {
                         input = JOptionPane.showInputDialog(this, "请输入要保存的文件名");
                         remove(frame);
                     }else {
-                        FileWriter fileWriter = new FileWriter("CS109-2023-Sping-ChessDemo/txt/" + input + ".txt");
+                        FileWriter fileWriter = new FileWriter("./CS109-2023-Sping-ChessDemo/txt/" + input + ".txt");
                         BufferedWriter writer = new BufferedWriter(fileWriter);
                         writer.write(out);
                         writer.close();
@@ -201,9 +201,9 @@ public class ChessGameFrame extends JFrame {
             String input = JOptionPane.showInputDialog(this, "请输入要载入的文件名");
             while (input!=null) {
                 try {
-                    File txt = new File("CS109-2023-Sping-ChessDemo/txt/" + input + ".txt");
+                    File txt = new File("./CS109-2023-Sping-ChessDemo/txt/" + input + ".txt");
                     if (txt.exists()) {
-                        this.chessboardComponent.getGameController().load("CS109-2023-Sping-ChessDemo/txt/" + input + ".txt");
+                        this.chessboardComponent.getGameController().load("./CS109-2023-Sping-ChessDemo/txt/" + input + ".txt");
                         break;
                     } else if (input.equals("")) {
                         JFrame frame = new JFrame("提示窗口");

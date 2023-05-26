@@ -68,6 +68,9 @@ public class GameController implements GameListener {
     public String save(){
         String out = "",temp;
         out += currentPlayer == PlayerColor.BLUE?"BBB": "RRR";
+        temp = "";  temp += turn;
+        while(temp.length() < 3)    temp = '0' + temp;
+        out += temp;
 
         for(int i=0;i<=8;i++){
             for(int j=0;j<=6;j++){
@@ -94,8 +97,9 @@ public class GameController implements GameListener {
             BufferedReader reader = new BufferedReader(fileReader);
             String line = reader.readLine();
             clearChessboard();
-            currentPlayer = line.substring(0,3).equals("BBB")?PlayerColor.BLUE:PlayerColor.RED;
-            for(int pos=3;pos<line.length();pos+=4){
+            currentPlayer = line.substring(0, 3).equals("BBB")?PlayerColor.BLUE:PlayerColor.RED;
+            turn = Integer.parseInt(line.substring(3, 5));
+            for(int pos=6;pos<line.length();pos+=4){
                 model.addChessPiece(line.substring(pos, pos+4));
                 view.addChessComponent(line.substring(pos, pos+4));
             }

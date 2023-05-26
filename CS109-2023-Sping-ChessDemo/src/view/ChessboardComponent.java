@@ -93,6 +93,31 @@ public class ChessboardComponent extends JComponent {
 
     }
 
+    public void paintLandform(){
+        for (int i = 0; i < CHESSBOARD_ROW_SIZE.getNum(); i++) {
+            for (int j = 0; j < CHESSBOARD_COL_SIZE.getNum(); j++) {
+                ChessboardPoint temp = new ChessboardPoint(i, j);
+                CellComponent cell;
+                if (riverCell.contains(temp)) {
+                    cell = new RiverCellComponent(Color.CYAN, calculatePoint(i, j), CHESS_SIZE);
+                    this.add(cell);
+                } else if(trapCell.contains(temp)){
+                    cell = new TrapCellComponent(Color.RED, calculatePoint(i, j), CHESS_SIZE);
+                    this.add(cell);
+                } else if(RedDens.contains(temp)){
+                    cell = new RedDensCellComponent(Color.GREEN, calculatePoint(i, j), CHESS_SIZE);
+                    this.add(cell);
+                } else if(BlueDens.contains(temp)){
+                    cell = new BlueDensCellComponent(Color.GREEN, calculatePoint(i, j), CHESS_SIZE);
+                    this.add(cell);
+                } else {
+                    cell = new LandCellComponent(Color.LIGHT_GRAY, calculatePoint(i, j), CHESS_SIZE);
+                    this.add(cell);
+                }
+                gridComponents[i][j] = cell;
+            }
+        }
+    }
     public void initiateGridComponents() {
 
         riverCell.add(new ChessboardPoint(3,1));
@@ -119,29 +144,7 @@ public class ChessboardComponent extends JComponent {
         RedDens.add(new ChessboardPoint(0, 3));
         BlueDens.add(new ChessboardPoint(8, 3));
 
-        for (int i = 0; i < CHESSBOARD_ROW_SIZE.getNum(); i++) {
-            for (int j = 0; j < CHESSBOARD_COL_SIZE.getNum(); j++) {
-                ChessboardPoint temp = new ChessboardPoint(i, j);
-                CellComponent cell;
-                if (riverCell.contains(temp)) {
-                    cell = new RiverCellComponent(Color.CYAN, calculatePoint(i, j), CHESS_SIZE);
-                    this.add(cell);
-                } else if(trapCell.contains(temp)){
-                    cell = new TrapCellComponent(Color.RED, calculatePoint(i, j), CHESS_SIZE);
-                    this.add(cell);
-                } else if(RedDens.contains(temp)){
-                    cell = new RedDensCellComponent(Color.GREEN, calculatePoint(i, j), CHESS_SIZE);
-                    this.add(cell);
-                } else if(BlueDens.contains(temp)){
-                    cell = new BlueDensCellComponent(Color.GREEN, calculatePoint(i, j), CHESS_SIZE);
-                    this.add(cell);
-                } else {
-                    cell = new LandCellComponent(Color.LIGHT_GRAY, calculatePoint(i, j), CHESS_SIZE);
-                    this.add(cell);
-                }
-                gridComponents[i][j] = cell;
-            }
-        }
+        paintLandform();
     }
 
     public void registerController(GameController gameController) {
@@ -206,11 +209,11 @@ public class ChessboardComponent extends JComponent {
 
     public void addTrap(ChessboardPoint point){
         this.trapCell.add(point);
-        this.gridComponents[point.getRow()][point.getCol()].revalidate();
+//        paintLandform();
     }
     public void removeTrap(ChessboardPoint point){
         this.trapCell.remove(point);
-        this.gridComponents[point.getRow()][point.getCol()].revalidate();
+//        paintLandform();
     }
     private CellComponent getGridComponentAt(ChessboardPoint point) {
         return gridComponents[point.getRow()][point.getCol()];
