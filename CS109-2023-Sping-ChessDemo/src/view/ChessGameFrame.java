@@ -8,9 +8,6 @@ import model.PlayerColor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -231,7 +228,7 @@ public class ChessGameFrame extends JFrame {
     }
     private void addChangeStyleButton() {
         JButton button = new JButton("更换风格");
-        button.setLocation(HEIGTH-25, HEIGTH / 10 + 440);
+        button.setLocation(HEIGTH-25, HEIGTH / 10 + 520);
         button.setSize(250, 60);
         button.setFont(new Font("宋体", Font.BOLD, 24));
         add(button);
@@ -266,15 +263,19 @@ public class ChessGameFrame extends JFrame {
             chessboardComponent.getGameController().getChessGameFrame().addBackground();
         });
     }
+    public int getStyle(){
+        return style;
+    }
     private void addRegretButton() {
-        JButton button = new JButton("Regret");
+        JButton button = new JButton("悔棋");
         button.setLocation(HEIGTH-25, HEIGTH / 10 + 440);
         button.setSize(250, 60);
-        button.setFont(new Font("Rockwell", Font.BOLD, 20));
+        button.setFont(new Font("宋体", Font.BOLD, 24));
         add(button);
 
         button.addActionListener(e -> {
             this.chessboardComponent.getGameController().regret();
         });
     }
+
 }
