@@ -15,10 +15,10 @@ import java.io.IOException;
  * but this class only cares how to draw Chess on ChessboardComponent
  */
 public class LionChessComponent extends Component {
-    private File RedLionFile1=new File("CS109-2023-Sping-ChessDemo/resource/RedLion.png");
-    private File BlueLionFile1=new File("CS109-2023-Sping-ChessDemo/resource/BlueLion.png");
-    private File RedLionFile2=new File("CS109-2023-Sping-ChessDemo/resource/灰太狼.png");
-    private File BlueLionFile2=new File("CS109-2023-Sping-ChessDemo/resource/喜羊羊.png");
+    private File RedLionFile1=new File("resource/RedLion.png");
+    private File BlueLionFile1=new File("resource/BlueLion.png");
+    private File RedLionFile2=new File("resource/灰太狼.png");
+    private File BlueLionFile2=new File("resource/喜羊羊.png");
     private BufferedImage ImageOfLion;
     private int style=1;
     public LionChessComponent(PlayerColor owner, int size) {

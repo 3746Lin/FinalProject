@@ -6,7 +6,7 @@ import javax.sound.sampled.Clip;
 import java.io.File;
 
 public class PlayMusic implements Runnable{
-    private File Bgm=new File("CS109-2023-Sping-ChessDemo/music/backgroundmusicwav.wav");
+    private File Bgm=new File("music/backgroundmusicwav.wav");
     private int MusicStyle;
     private Clip clip;
     private boolean alreadythread=true;

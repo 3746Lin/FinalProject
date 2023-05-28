@@ -14,10 +14,10 @@ import java.io.IOException;
  * but this class only cares how to draw Chess on ChessboardComponent
  */
 public class DogChessComponent extends Component {
-    private File RedDogFile1=new File("CS109-2023-Sping-ChessDemo/resource/RedDog.png");
-    private File BlueDogFile1=new File("CS109-2023-Sping-ChessDemo/resource/BlueDog.png");
-    private File RedDogFile2=new File("CS109-2023-Sping-ChessDemo/resource/巫师狼.png");
-    private File BlueDogFile2=new File("CS109-2023-Sping-ChessDemo/resource/暖羊羊.png");
+    private File RedDogFile1=new File("resource/RedDog.png");
+    private File BlueDogFile1=new File("resource/BlueDog.png");
+    private File RedDogFile2=new File("resource/巫师狼.png");
+    private File BlueDogFile2=new File("resource/暖羊羊.png");
     private BufferedImage ImageOfDog;
     private int style=1;
     public DogChessComponent(PlayerColor owner, int size) {

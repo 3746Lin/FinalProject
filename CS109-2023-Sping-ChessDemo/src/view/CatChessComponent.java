@@ -16,10 +16,10 @@ import java.io.IOException;
  * but this class only cares how to draw Chess on ChessboardComponent
  */
 public class CatChessComponent extends Component {
-    private File RedCatFile1=new File("CS109-2023-Sping-ChessDemo/resource/RedCat.png");
-    private File BlueCatFile1=new File("CS109-2023-Sping-ChessDemo/resource/BlueCat.png");
-    private File RedCatFile2=new File("CS109-2023-Sping-ChessDemo/resource/蕉太狼.png");
-    private File BlueCatFile2=new File("CS109-2023-Sping-ChessDemo/resource/美羊羊.png");
+    private File RedCatFile1=new File("resource/RedCat.png");
+    private File BlueCatFile1=new File("resource/BlueCat.png");
+    private File RedCatFile2=new File("resource/蕉太狼.png");
+    private File BlueCatFile2=new File("resource/美羊羊.png");
     private BufferedImage ImageOfCat;
     private int style=1;
     public CatChessComponent(PlayerColor owner, int size) {

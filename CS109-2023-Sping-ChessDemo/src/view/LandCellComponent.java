@@ -7,8 +7,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class LandCellComponent extends CellComponent {
-    private File LandFile1=new File("CS109-2023-Sping-ChessDemo/resource/Land.png");
-    private File LandFile2=new File("CS109-2023-Sping-ChessDemo/resource/草地.png");
+    private File LandFile1=new File("resource/Land.png");
+    private File LandFile2=new File("resource/草地.png");
     private BufferedImage ImageOfLand;
     private int style=1;
     public LandCellComponent(Color background, Point location, int size) {

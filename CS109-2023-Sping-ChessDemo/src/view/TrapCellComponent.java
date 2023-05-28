@@ -7,8 +7,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class TrapCellComponent extends CellComponent {
-    private File TrapFile1=new File("CS109-2023-Sping-ChessDemo/resource/Trap.png");
-    private File TrapFile2=new File("CS109-2023-Sping-ChessDemo/resource/陷阱.png");
+    private File TrapFile1=new File("resource/Trap.png");
+    private File TrapFile2=new File("resource/陷阱.png");
     private BufferedImage ImageOfTrap;
     private int style=1;
     private boolean hasWorked;

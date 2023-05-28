@@ -19,10 +19,10 @@ import java.io.IOException;
  * but this class only cares how to draw Chess on ChessboardComponent
  */
 public class ElephantChessComponent extends Component {
-    private File RedElephantFile1=new File("CS109-2023-Sping-ChessDemo/resource/RedElephant.png");
-    private File BlueElephantFile1=new File("CS109-2023-Sping-ChessDemo/resource/BlueElephant.png");
-    private File RedElephantFile2=new File("CS109-2023-Sping-ChessDemo/resource/黑大帅.png");
-    private File BlueElephantFile2=new File("CS109-2023-Sping-ChessDemo/resource/包包大人.png");
+    private File RedElephantFile1=new File("resource/RedElephant.png");
+    private File BlueElephantFile1=new File("resource/BlueElephant.png");
+    private File RedElephantFile2=new File("resource/黑大帅.png");
+    private File BlueElephantFile2=new File("resource/包包大人.png");
     private BufferedImage ImageOfElephant;
     private int style=1;
     public ElephantChessComponent(PlayerColor owner, int size) {

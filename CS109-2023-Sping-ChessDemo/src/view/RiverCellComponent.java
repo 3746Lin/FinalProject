@@ -7,8 +7,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class RiverCellComponent extends CellComponent {
-    private File RiverFile1=new File("CS109-2023-Sping-ChessDemo/resource/River.png");
-    private File RiverFile2=new File("CS109-2023-Sping-ChessDemo/resource/河流.png");
+    private File RiverFile1=new File("resource/River.png");
+    private File RiverFile2=new File("resource/河流.png");
     private BufferedImage ImageOfRiver;
     private int style=1;
     public RiverCellComponent(Color background, Point location, int size) {

@@ -14,10 +14,10 @@ import java.io.IOException;
  * but this class only cares how to draw Chess on ChessboardComponent
  */
 public class RatChessComponent extends Component {
-    private File RedRatFile1 = new File("CS109-2023-Sping-ChessDemo/resource/RedRat.png");
-    private File BlueRatFile1 = new File("CS109-2023-Sping-ChessDemo/resource/BlueRat.png");
-    private File RedRatFile2 = new File("CS109-2023-Sping-ChessDemo/resource/小灰灰.png");
-    private File BlueRatFile2 = new File("CS109-2023-Sping-ChessDemo/resource/潇洒哥.png");
+    private File RedRatFile1 = new File("resource/RedRat.png");
+    private File BlueRatFile1 = new File("resource/BlueRat.png");
+    private File RedRatFile2 = new File("resource/小灰灰.png");
+    private File BlueRatFile2 = new File("resource/潇洒哥.png");
     private BufferedImage ImageOfRat;
     private int style=1;
 

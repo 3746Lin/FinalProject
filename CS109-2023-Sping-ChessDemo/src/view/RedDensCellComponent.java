@@ -7,8 +7,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class RedDensCellComponent extends CellComponent {
-    private File DensFile1=new File("CS109-2023-Sping-ChessDemo/resource/Dens.png");
-    private File DensFile2=new File("CS109-2023-Sping-ChessDemo/resource/狼堡.png");
+    private File DensFile1=new File("resource/Dens.png");
+    private File DensFile2=new File("resource/狼堡.png");
     private BufferedImage ImageOfDens;
     private int style=1;
     public RedDensCellComponent(Color background, Point location, int size) {

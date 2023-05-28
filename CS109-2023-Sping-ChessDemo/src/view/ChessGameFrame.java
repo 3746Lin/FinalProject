@@ -30,9 +30,8 @@ public class ChessGameFrame extends JFrame {
     private JLabel statusLabel = new JLabel("当前行棋方:蓝");
     private JLabel TurnLabel = new JLabel("回合数:1");
     private  JLabel ResetStatusLabel;
-    private ImageIcon imageIcon1=new ImageIcon("CS109-2023-Sping-ChessDemo/resource/background.jpg");
-    private ImageIcon imageIcon2=new ImageIcon("CS109-2023-Sping-ChessDemo/resource/青青草原背景.jpg");
-    private File Bgm=new File("CS109-2023-Sping-ChessDemo/music/backgroundmusicwav.wav");
+    private ImageIcon imageIcon1=new ImageIcon("resource/background.jpg");
+    private ImageIcon imageIcon2=new ImageIcon("resource/青青草原背景.jpg");
     private ArrayList<JLabel> backgrounds=new ArrayList<JLabel>();
     private int style=1;
     private PlayMusic playMusic=new PlayMusic(0);
@@ -187,7 +186,7 @@ public class ChessGameFrame extends JFrame {
                         input = JOptionPane.showInputDialog(this, "请输入要保存的文件名");
                         remove(frame);
                     }else {
-                        FileWriter fileWriter = new FileWriter("./CS109-2023-Sping-ChessDemo/txt/" + input + ".txt");
+                        FileWriter fileWriter = new FileWriter("./txt/" + input + ".txt");
                         BufferedWriter writer = new BufferedWriter(fileWriter);
                         writer.write(out);
                         writer.close();
@@ -211,9 +210,9 @@ public class ChessGameFrame extends JFrame {
             String input = JOptionPane.showInputDialog(this, "请输入要载入的文件名");
             while (input!=null) {
                 try {
-                    File txt = new File("./CS109-2023-Sping-ChessDemo/txt/" + input + ".txt");
+                    File txt = new File("./txt/" + input + ".txt");
                     if (txt.exists()) {
-                        this.chessboardComponent.getGameController().load("./CS109-2023-Sping-ChessDemo/txt/" + input + ".txt");
+                        this.chessboardComponent.getGameController().load("./txt/" + input + ".txt");
                         break;
                     } else if (input.equals("")) {
                         JFrame frame = new JFrame("提示窗口");
