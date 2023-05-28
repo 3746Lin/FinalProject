@@ -8,6 +8,8 @@ import view.*;
 import view.Component;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
@@ -42,6 +44,10 @@ public class GameController implements GameListener {
     // Record whether there is a selected piece before
     private ChessboardPoint selectedPoint;
     private ChessGameFrame chessGameFrame;
+    private Timer blueTimer;
+    private Timer redTimer;
+    private int blueTime=60;
+    private int redTime=60;
 
 
     public GameController(ChessboardComponent view, Chessboard model,ChessGameFrame chessGameFrame) {
@@ -54,6 +60,8 @@ public class GameController implements GameListener {
 
         view.registerController(this);
         view.initiateChessComponent(model);
+        addTimer();
+        blueTimer.start();
         view.repaint();
     }
 
@@ -62,6 +70,8 @@ public class GameController implements GameListener {
             for (int j = 0; j < Constant.CHESSBOARD_COL_SIZE.getNum(); j++) {
                 ChessboardPoint point = new ChessboardPoint(i,j);
                 model.getGrid()[i][j].setPiece(null);
+                view.getGridComponents(i,j).setSelected(false);
+                view.getGridComponents(i,j).repaint();
                 view.removeChessComponentAtGrid(point);
             }
         }
@@ -123,6 +133,30 @@ public class GameController implements GameListener {
         if (win()){
             return;
         }
+        if (FirstCellComponentList.size()!=0) {
+            for (CellComponent cellComponent : FirstCellComponentList) {
+                cellComponent.setSelected(false);
+                cellComponent.repaint();
+            }
+        }
+        if (FirstComponentList.size()!=0) {
+            for (Component value : FirstComponentList) {
+                value.setCanBeSelected(false);
+                value.repaint();
+            }
+        }
+        for (int i=0;i<9;i++){
+            for (int j=0;j<7;j++){
+                ChessboardPoint TempPoint=new ChessboardPoint(i,j);
+                if (model.CheckEmptyPoint(TempPoint)!=null) {
+                    if (view.getGridComponents(i, j).getComponent(0) != null && view.getGridComponents(i, j).getComponent(0) instanceof Component) {
+                        ((Component) view.getGridComponents(i, j).getComponent(0)).setCanBeSelected(false);
+                        ((Component) view.getGridComponents(i, j).getComponent(0)).setSelected(false);
+                        ((Component) view.getGridComponents(i, j).getComponent(0)).repaint();
+                    }
+                }
+            }
+        }
         int length = this.Steps.size();
         String temp = this.Steps.get(length-1);
         if(temp == "000000")
@@ -172,6 +206,13 @@ public class GameController implements GameListener {
         if (currentPlayer.getColor()==Color.RED){
             turn--;
             chessGameFrame.addTurnLabel();
+            redTime=60;
+            chessGameFrame.addTimeLabel(60);
+            redTimer.start();
+        }else {
+            blueTime=60;
+            chessGameFrame.addTimeLabel(60);
+            blueTimer.start();
         }
         chessGameFrame.repaint();
     }
@@ -229,6 +270,15 @@ public class GameController implements GameListener {
             if (currentPlayer.getColor()==Color.BLUE){
                 turn++;
                 chessGameFrame.addTurnLabel();
+                blueTimer.start();
+                redTimer.stop();
+                redTime=60;
+                chessGameFrame.addTimeLabel(60);
+            }else {
+                redTimer.start();
+                blueTimer.stop();
+                blueTime=60;
+                chessGameFrame.addTimeLabel(60);
             }
             chessGameFrame.repaint();
             view.repaint();
@@ -318,6 +368,15 @@ public class GameController implements GameListener {
                 if (currentPlayer.getColor()==Color.BLUE){
                     turn++;
                     chessGameFrame.addTurnLabel();
+                    blueTimer.start();
+                    redTimer.stop();
+                    redTime=60;
+                    chessGameFrame.addTimeLabel(60);
+                }else {
+                    redTimer.start();
+                    blueTimer.stop();
+                    blueTime=60;
+                    chessGameFrame.addTimeLabel(60);
                 }
                 chessGameFrame.repaint();
                 view.repaint();
@@ -433,5 +492,66 @@ public class GameController implements GameListener {
                 }
             }
         }
+        chessGameFrame.addTimeLabel(60);
+    }
+    //加入计时器
+    private void addTimer(){
+        blueTimer = new Timer(1000, new ActionListener() {
+            int anInt=1;
+            public void actionPerformed(ActionEvent e) {
+                if (currentPlayer.getColor().equals(Color.BLUE)) {
+                    chessGameFrame.addTimeLabel(blueTime);
+                    chessGameFrame.repaint();
+                    blueTime--;
+                    if (blueTime == 0) {
+                        chessGameFrame.addTimeLabel(blueTime);
+                        chessGameFrame.repaint();
+                        JOptionPane.showMessageDialog(null, "蓝方超时，自动换边!");
+                        swapColor();
+                        chessGameFrame.addTimeLabel(60);
+                        blueTimer.stop();
+                        blueTime=60;
+                        redTimer.start();
+                        chessGameFrame.addCurrentPlayerLabel();
+                        chessGameFrame.repaint();
+                        blueTime=60;
+                    } else {
+                        chessGameFrame.addTimeLabel(blueTime);
+                        chessGameFrame.repaint();
+                    }
+                }
+            }
+        });
+        redTimer = new Timer(1000, new ActionListener() {
+            int anInt=1;
+            public void actionPerformed(ActionEvent e) {
+                if (currentPlayer.getColor().equals(Color.RED)) {
+                    redTime--;
+                    if (redTime == 0) {
+                        chessGameFrame.addTimeLabel(redTime);
+                        chessGameFrame.repaint();
+                        JOptionPane.showMessageDialog(null, "红方超时，自动换边!");
+                        swapColor();
+                        chessGameFrame.addTimeLabel(60);
+                        redTimer.stop();
+                        redTime=60;
+                        turn++;
+                        blueTimer.start();
+                        chessGameFrame.addCurrentPlayerLabel();
+                        chessGameFrame.addTurnLabel();
+                        chessGameFrame.repaint();
+                    } else {
+                        chessGameFrame.addTimeLabel(redTime);
+                        chessGameFrame.repaint();
+                    }
+                }
+            }
+        });
+    }
+    public Timer getBlueTimer(){
+        return blueTimer;
+    }
+    public Timer getRedTimer(){
+        return redTimer;
     }
 }

@@ -29,6 +29,7 @@ public class ChessGameFrame extends JFrame {
     private ChessboardComponent chessboardComponent;
     private JLabel statusLabel = new JLabel("当前行棋方:蓝");
     private JLabel TurnLabel = new JLabel("回合数:1");
+    private JLabel TimerLabel = new JLabel("回合倒计时:60s");
     private  JLabel ResetStatusLabel;
     private ImageIcon imageIcon1=new ImageIcon("resource/background.jpg");
     private ImageIcon imageIcon2=new ImageIcon("resource/青青草原背景.jpg");
@@ -55,6 +56,7 @@ public class ChessGameFrame extends JFrame {
         addLoadButton();
         addInitialButton();
         addTurnLabel();
+        addTimeLabel(60);
         addCurrentPlayerLabel();
         addRegretButton();
         addChangeStyleButton();
@@ -121,6 +123,8 @@ public class ChessGameFrame extends JFrame {
         public void actionPerformed(ActionEvent arg0) {
                 SwingUtilities.invokeLater(() -> {
                     chessboardComponent.getGameController().clearChessboard();
+                    chessboardComponent.getGameController().getBlueTimer().stop();
+                    chessboardComponent.getGameController().getRedTimer().stop();
                     chessboardComponent.initiateChessComponent(chessboardComponent.getGameController().getChessboard());
                     chessboardComponent.registerController(new GameController(chessboardComponent,new Chessboard(),chessboardComponent.getGameController().getChessGameFrame()));
                     chessboardComponent.getGameController().resetTurnAndCurrentPlayer();
@@ -135,8 +139,12 @@ public class ChessGameFrame extends JFrame {
         ImageIcon image;
         image = imageIcon1;
         JLabel background = new JLabel(image);
+        background.setSize(this.getSize());
+        background.setVisible(false);
+        background.setOpaque(true);
         background.setBounds(0,0,this.getWidth(),this.getHeight());
         this.getLayeredPane().add(background,new Integer(Integer.MIN_VALUE));
+        background.setVisible(true);
     }
 
     public void addCurrentPlayerLabel() {
@@ -165,7 +173,17 @@ public class ChessGameFrame extends JFrame {
         TurnLabel.setFont(new Font("宋体", Font.BOLD, 15));
         add(TurnLabel);
     }
-
+    public void addTimeLabel(int i) {
+        if (chessboardComponent.getGameController() != null) {
+            JLabel ResetTimerLabel = new JLabel("回合倒计时:" + i + "s");
+            remove(TimerLabel);
+            TimerLabel = ResetTimerLabel;
+        }
+        TimerLabel.setLocation(370, 55);
+        TimerLabel.setSize(300, 30);
+        TimerLabel.setFont(new Font("宋体", Font.BOLD, 15));
+        add(TimerLabel);
+    }
     private void addSaveButton() {
         JButton button = new JButton("存档");
         button.setLocation(HEIGTH-25, HEIGTH / 10 + 280);
