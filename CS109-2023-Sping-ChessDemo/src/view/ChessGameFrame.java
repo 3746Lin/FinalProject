@@ -5,12 +5,16 @@ import java.awt.event.ActionListener;
 import controller.GameController;
 import model.Chessboard;
 import model.PlayerColor;
+import view.PlayMusic;
 
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Objects;
+
+import java.io.File;
+
 
 /**
  * 这个类表示游戏过程中的整个游戏界面，是一切的载体
@@ -23,12 +27,15 @@ public class ChessGameFrame extends JFrame {
     private final int ONE_CHESS_SIZE;
 
     private ChessboardComponent chessboardComponent;
-    private JLabel statusLabel = new JLabel("当前玩家:BLUE");
+    private JLabel statusLabel = new JLabel("当前行棋方:蓝");
     private JLabel TurnLabel = new JLabel("回合数:1");
+    private  JLabel ResetStatusLabel;
     private ImageIcon imageIcon1=new ImageIcon("CS109-2023-Sping-ChessDemo/resource/background.jpg");
     private ImageIcon imageIcon2=new ImageIcon("CS109-2023-Sping-ChessDemo/resource/青青草原背景.jpg");
+    private File Bgm=new File("CS109-2023-Sping-ChessDemo/music/backgroundmusicwav.wav");
     private ArrayList<JLabel> backgrounds=new ArrayList<JLabel>();
     private int style=1;
+    private PlayMusic playMusic=new PlayMusic(0);
     public ChessGameFrame(int width, int height) {
         setTitle("WHZ and LJZ's project"); //设置标题
         this.WIDTH = width;
@@ -88,7 +95,15 @@ public class ChessGameFrame extends JFrame {
 
     private void addCheckRuleButton() {
         JButton button = new JButton("查看规则");
-        button.addActionListener((e) -> JOptionPane.showMessageDialog(this, "Basic Rule:Elephant>Lion>Tiger>Leopard>Wolf>Dog>Cat>Rat(>Elephant)   "));
+        if (style==1) {
+            button.addActionListener((e) -> JOptionPane.showMessageDialog(
+                    this, "基本规则:象>狮>虎>豹>狼>狗>猫>鼠(>象)\n" +
+                            "狮虎可跳河(如果河里没有老鼠)\n" +
+                            "老鼠可以进河，但进河之后只能同级互吃不能吃岸上的象   "));
+        }else {
+            button.addActionListener((e) -> JOptionPane.showMessageDialog(
+                    this, "基本规则:包包大人=黑大帅>喜羊羊=灰太狼>沸羊羊=红太狼>慢羊羊=夜太狼>懒羊羊=灰二太太狼>暖羊羊=巫师狼>美羊羊=蕉太狼>潇洒哥=小灰灰(>包包大人=黑大帅)   "));
+        }
         button.setLocation(HEIGTH-25, HEIGTH / 10 + 120);
         button.setSize(250, 60);
         button.setFont(new Font("宋体", Font.BOLD, 24));
@@ -119,24 +134,19 @@ public class ChessGameFrame extends JFrame {
     private void addBackground(){
         ((JPanel)this.getContentPane()).setOpaque(false);
         ImageIcon image;
-        if (style==1) {
-            image = imageIcon1;
-        }else {
-            image = imageIcon2;
-        }
-        if (backgrounds!=null&&backgrounds.size()!=0){
-            remove(backgrounds.get(0));
-            backgrounds.remove(0);
-        }
+        image = imageIcon1;
         JLabel background = new JLabel(image);
-        backgrounds.add(background);
         background.setBounds(0,0,this.getWidth(),this.getHeight());
         this.getLayeredPane().add(background,new Integer(Integer.MIN_VALUE));
     }
 
     public void addCurrentPlayerLabel() {
         if (chessboardComponent.getGameController() != null) {
-            JLabel ResetStatusLabel = new JLabel("当前玩家:"+chessboardComponent.getGameController().getCurrentPlayer().toString());
+            if (chessboardComponent.getGameController().getCurrentPlayer().equals(PlayerColor.BLUE)) {
+                ResetStatusLabel = new JLabel("当前行棋方:蓝");
+            }else {
+                ResetStatusLabel = new JLabel("当前行棋方:红");
+            }
             remove(statusLabel);
             statusLabel = ResetStatusLabel;
         }
@@ -227,9 +237,9 @@ public class ChessGameFrame extends JFrame {
         });
     }
     private void addChangeStyleButton() {
-        JButton button = new JButton("更换风格");
-        button.setLocation(HEIGTH-25, HEIGTH / 10 + 520);
-        button.setSize(250, 60);
+        JButton button = new JButton("设置风格和背景音乐");
+        button.setLocation(HEIGTH-50, HEIGTH / 10 + 520);
+        button.setSize(300, 60);
         button.setFont(new Font("宋体", Font.BOLD, 24));
         add(button);
 
@@ -239,17 +249,19 @@ public class ChessGameFrame extends JFrame {
 
     }
     private void showChangeStyleOptions(){
-        JFrame jFrame = new JFrame("选择风格");
+        JFrame jFrame = new JFrame("设置风格和背景音乐");
         jFrame.setSize(400, 100);
         jFrame.setLocation(600,450);
         jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        JLabel jLabel=new JLabel("选择你想要的风格");
+        JLabel jLabel=new JLabel("设置风格和背景音乐");
         JButton normal = new JButton("普通风格");
         JButton happysheep = new JButton("喜羊羊与灰太狼");
+        JButton button = new JButton("开关背景音乐");
         JPanel jPanel = new JPanel();
         jPanel.add(jLabel);
         jPanel.add(normal);
         jPanel.add(happysheep);
+        jPanel.add(button);
         jFrame.getContentPane().add(jPanel, BorderLayout.CENTER);
         jFrame.setVisible(true);
         normal.addActionListener(e -> {
@@ -261,6 +273,9 @@ public class ChessGameFrame extends JFrame {
             style=2;
             chessboardComponent.getGameController().RepaintAll(2);
             chessboardComponent.getGameController().getChessGameFrame().addBackground();
+        });
+        button.addActionListener(e -> {
+            setBackGroundMusic();
         });
     }
     public int getStyle(){
@@ -276,6 +291,42 @@ public class ChessGameFrame extends JFrame {
         button.addActionListener(e -> {
             this.chessboardComponent.getGameController().regret();
         });
+    }
+    private void setBackGroundMusic(){
+        JFrame jFrame = new JFrame("开关背景音乐");
+        jFrame.setSize(400, 100);
+        jFrame.setLocation(600,450);
+        jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        JButton start = new JButton("开");
+        JButton stop = new JButton("关");
+        JPanel jPanel = new JPanel();
+        jPanel.add(start);
+        jPanel.add(stop);
+        jFrame.getContentPane().add(jPanel, BorderLayout.CENTER);
+        jFrame.setVisible(true);
+        start.addActionListener(e -> {
+            try {
+                addMusic(1);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        stop.addActionListener(e -> {
+            try {
+                addMusic(0);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+    }
+    private void addMusic(int i)throws Exception{
+        if (i==1) {
+            //if (playMusic.getClip()!=null&&!playMusic.getClip().isRunning()){
+                playMusic.PlayExactMusic();
+            //}
+        }else {
+            playMusic.stop();
+        }
     }
 
 }

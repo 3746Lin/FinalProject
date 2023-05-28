@@ -5,6 +5,7 @@ import view.Component;
 
 import java.awt.*;
 import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * This class store the real chess information.
@@ -142,7 +143,7 @@ public class Chessboard {
     }
     public boolean isValidMove(ChessboardPoint src, ChessboardPoint dest) {
 
-        if(getChessPieceAt(src).getName()=="Lion"||getChessPieceAt(src).getName()=="Tiger"){
+        if(Objects.equals(getChessPieceAt(src).getName(), "Lion") || Objects.equals(getChessPieceAt(src).getName(), "Tiger")){
             int col = src.getCol(), row = src.getRow(), col2 = dest.getCol(), row2 = dest.getRow();
             if(col == col2)
                 if(col == 1 || col == 2 || col == 4 || col == 5)
@@ -171,7 +172,7 @@ public class Chessboard {
                     }
 
         }
-        if (getChessPieceAt(src).getName()=="Rat"){
+        if (Objects.equals(getChessPieceAt(src).getName(), "Rat")){
             if (calculateDistance(src,dest)!=1||getChessPieceAt(dest)!=null) {
                 return false;
             }else {
@@ -195,7 +196,7 @@ public class Chessboard {
             return false;
         ChessPiece caping = this.getChessPieceAt(src), caped = this.getChessPieceAt(dest);
 
-        if(getChessPieceAt(src).getName()=="Lion"||getChessPieceAt(src).getName()=="Tiger"){
+        if(Objects.equals(getChessPieceAt(src).getName(), "Lion") || Objects.equals(getChessPieceAt(src).getName(), "Tiger")){
             int SpecialRow= src.getRow();
             int SpecialCol= src.getCol();
             if (SpecialRow==3||SpecialRow==4||SpecialRow==5){
@@ -210,7 +211,7 @@ public class Chessboard {
                 }
             }
         }
-        if (getChessPieceAt(src).getName()=="Rat"){
+        if (Objects.equals(getChessPieceAt(src).getName(), "Rat")){
             if (inRiver(src)&&inRiver(dest)&&calculateDistance(src,dest)==1){
                 return true;
             }if (!inRiver(src)&&!inRiver(dest)&&getChessPieceAt(src).canCapture(getChessPieceAt(dest))&&calculateDistance(src,dest)==1&&(getChessPieceAt(src).getOwner()!=getChessPieceAt(dest).getOwner())){

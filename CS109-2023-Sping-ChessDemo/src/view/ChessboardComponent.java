@@ -7,6 +7,7 @@ import model.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,8 +25,6 @@ public class ChessboardComponent extends JComponent {
     private final Set<ChessboardPoint> trapCell = new HashSet<>();
     private final Set<ChessboardPoint> RedDens = new HashSet<>();
     private final Set<ChessboardPoint> BlueDens = new HashSet<>();
-
-
     private GameController gameController;
 
     public ChessboardComponent(int chessSize) {
@@ -219,7 +218,7 @@ public class ChessboardComponent extends JComponent {
         return gridComponents[point.getRow()][point.getCol()];
     }
 
-    private ChessboardPoint getChessboardPoint(Point point) {
+    public ChessboardPoint getChessboardPoint(Point point) {
         System.out.println("[" + point.y/CHESS_SIZE +  ", " +point.x/CHESS_SIZE + "] Clicked");
         return new ChessboardPoint(point.y/CHESS_SIZE, point.x/CHESS_SIZE);
     }
@@ -233,8 +232,6 @@ public class ChessboardComponent extends JComponent {
         super.paintComponent(g);
         ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
-
-    @Override
     protected void processMouseEvent(MouseEvent e) {
         if (e.getID() == MouseEvent.MOUSE_PRESSED) {
             JComponent clickedComponent = (JComponent) getComponentAt(e.getX(), e.getY());

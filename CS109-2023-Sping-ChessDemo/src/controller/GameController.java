@@ -1,5 +1,5 @@
 package controller;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 
 import listener.GameListener;
@@ -8,6 +8,8 @@ import view.*;
 import view.Component;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -103,6 +105,7 @@ public class GameController implements GameListener {
                 model.addChessPiece(line.substring(pos, pos+4));
                 view.addChessComponent(line.substring(pos, pos+4));
             }
+            RepaintAll(getChessGameFrame().getStyle());
             view.repaint();
 
             while ((line = reader.readLine()) != null) {
@@ -117,6 +120,9 @@ public class GameController implements GameListener {
     }
 
     public void regret(){
+        if (win()){
+            return;
+        }
         int length = this.Steps.size();
         String temp = this.Steps.get(length-1);
         if(temp == "000000")
@@ -176,11 +182,11 @@ public class GameController implements GameListener {
 
     private boolean win() {
         if (CountRedChess==0){
-            JOptionPane.showMessageDialog(null, "Blue win!");
+            JOptionPane.showMessageDialog(null, "蓝方获胜!");
             return true;
         }
         if (CountBlueChess==0){
-            JOptionPane.showMessageDialog(null, "Red win!");
+            JOptionPane.showMessageDialog(null, "红方获胜!");
             return true;
         }
         // TODO: Check the board if there is a winner

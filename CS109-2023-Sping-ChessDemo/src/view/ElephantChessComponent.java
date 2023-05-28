@@ -9,6 +9,7 @@ import model.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +21,7 @@ import java.io.IOException;
 public class ElephantChessComponent extends Component {
     private File RedElephantFile1=new File("CS109-2023-Sping-ChessDemo/resource/RedElephant.png");
     private File BlueElephantFile1=new File("CS109-2023-Sping-ChessDemo/resource/BlueElephant.png");
-    private File RedElephantFile2=new File("CS109-2023-Sping-ChessDemo/resource/黑大帅.jpg");
+    private File RedElephantFile2=new File("CS109-2023-Sping-ChessDemo/resource/黑大帅.png");
     private File BlueElephantFile2=new File("CS109-2023-Sping-ChessDemo/resource/包包大人.png");
     private BufferedImage ImageOfElephant;
     private int style=1;

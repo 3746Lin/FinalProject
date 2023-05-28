@@ -60,6 +60,7 @@ public class DogChessComponent extends Component {
             g2.fillRect(0, 0, getWidth(), getHeight());
         }
     }
+
     public void setStyle(int style){
         this.style=style;
     }

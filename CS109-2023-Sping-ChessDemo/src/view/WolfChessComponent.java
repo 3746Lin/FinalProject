@@ -6,6 +6,7 @@ import model.PlayerColor;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -61,6 +62,7 @@ public class WolfChessComponent extends Component {
             g2.fillRect(0, 0, getWidth(), getHeight());
         }
     }
+
     public void setStyle(int style){
         this.style=style;
     }

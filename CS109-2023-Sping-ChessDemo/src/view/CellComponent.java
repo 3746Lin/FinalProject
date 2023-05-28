@@ -2,6 +2,7 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 /**
  * This is the equivalent of the Cell class,
@@ -12,6 +13,7 @@ public class CellComponent extends JPanel {
     protected Color background;
     protected boolean isSelected;
     private int style=1;
+    private boolean isMouseOnComponent=false;
 
     public CellComponent(Color background, Point location, int size) {
         setLayout(new GridLayout(1,1));
@@ -36,4 +38,11 @@ public class CellComponent extends JPanel {
     public void setStyle(int style){
         this.style=style;
     }
+    public boolean getMouseOnComponent(){
+        return isMouseOnComponent;
+    }
+    public void setMouseOnComponent(boolean b){
+        this.isMouseOnComponent=true;
+    }
+
 }
