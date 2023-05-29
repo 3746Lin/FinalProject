@@ -43,4 +43,7 @@ public class TrapCellComponent extends CellComponent {
     public void setStyle(int style){
         this.style=style;
     }
+    public void setHasWorked(boolean b){
+        this.hasWorked=b;
+    }
 }

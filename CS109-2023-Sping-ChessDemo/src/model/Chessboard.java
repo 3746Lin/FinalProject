@@ -229,13 +229,13 @@ public class Chessboard {
         PlayerColor current = this.getChessPieceOwner(src);
         if(current == PlayerColor.RED){
             for(ChessboardPoint temp:redTrapCell){
-                if(dest.equals(temp)){
+                if(dest.equals(temp)&&getChessPieceOwner(src)!=getChessPieceOwner(dest)){
                     return true;
                 }
             }
         } else {
             for(ChessboardPoint temp:blueTrapCell){
-                if(dest.equals(temp)){
+                if(dest.equals(temp)&&getChessPieceOwner(src)!=getChessPieceOwner(dest)){
                     return true;
                 }
             }

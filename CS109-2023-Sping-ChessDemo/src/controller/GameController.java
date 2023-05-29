@@ -24,7 +24,7 @@ import java.util.List;
  * analyzes and then hands over to the model for processing
  * [in this demo the request methods are onPlayerClickCell() and onPlayerClickChessPiece()]
  *
-*/
+ */
 public class GameController implements GameListener {
 
     private List<String> Steps;
@@ -46,8 +46,10 @@ public class GameController implements GameListener {
     private ChessGameFrame chessGameFrame;
     private Timer blueTimer;
     private Timer redTimer;
+
     private int blueTime=60;
     private int redTime=60;
+
 
 
     public GameController(ChessboardComponent view, Chessboard model,ChessGameFrame chessGameFrame) {
@@ -71,6 +73,10 @@ public class GameController implements GameListener {
                 ChessboardPoint point = new ChessboardPoint(i,j);
                 model.getGrid()[i][j].setPiece(null);
                 view.getGridComponents(i,j).setSelected(false);
+                if (view.getGridComponents(i,j)instanceof TrapCellComponent){
+                    ((TrapCellComponent) view.getGridComponents(i,j)).setHasWorked(false);
+                }
+                view.getGridComponents(i,j).repaint();
                 view.getGridComponents(i,j).repaint();
                 view.removeChessComponentAtGrid(point);
             }
@@ -83,50 +89,89 @@ public class GameController implements GameListener {
         temp = "";  temp += turn;
         while(temp.length() < 3)    temp = '0' + temp;
         out += temp;
-
-        for(int i=0;i<=8;i++){
-            for(int j=0;j<=6;j++){
-                ChessPiece temppiece = model.getGrid()[i][j].getPiece();
-                if(temppiece != null){
-                    temp = "";
-                    temp += (char)('a' + i);temp += (char)('a' + j);temp += (char)('a' + temppiece.getRank());
-                    temp += temppiece.getOwner() == PlayerColor.BLUE?6:4;
-                    out += temp;
-                }
-            }
-        }
         out += "\n";
 
         for(String i:Steps){
+            if(i.equals("000000"))
+                continue;
             out += i; out += "\n";
         }
         return out;
     }
 
-    public void load(String path){
+    public boolean load(String path){
         try {
             FileReader fileReader = new FileReader(path);
             BufferedReader reader = new BufferedReader(fileReader);
             String line = reader.readLine();
             clearChessboard();
-            currentPlayer = line.substring(0, 3).equals("BBB")?PlayerColor.BLUE:PlayerColor.RED;
-            turn = Integer.parseInt(line.substring(3, 5));
-            for(int pos=6;pos<line.length();pos+=4){
-                model.addChessPiece(line.substring(pos, pos+4));
-                view.addChessComponent(line.substring(pos, pos+4));
-            }
-            RepaintAll(getChessGameFrame().getStyle());
-            view.repaint();
+            resetTurnAndCurrentPlayer();
+            if(!line.substring(0, 3).equals("BBB") && !line.substring(0, 3).equals("RRR"))
+                return false;
+            PlayerColor tmpcolor = line.substring(0, 3).equals("BBB")?PlayerColor.BLUE:PlayerColor.RED;
+            model = new Chessboard();
+            int temp = Integer.parseInt(line.substring(3, 6));
+            view.initiateChessComponent(getChessboard());
+            this.Steps = new ArrayList<String>();
+            this.Steps.add("000000");
+            turn = 1;
 
             while ((line = reader.readLine()) != null) {
                 this.Steps.add(line);
+                if(win())
+                    continue;
+
+                int old_row = line.charAt(0) - 'a', old_col = line.charAt(1) - 'a';
+                int new_row = line.charAt(2) - 'a', new_col = line.charAt(3) - 'a';
+                if( (old_row < 0 || old_row > 8) || (new_row < 0 || new_row > 8)
+                        ||  (old_col < 0 || old_col > 6) || (new_col < 0 || new_col > 6))
+                    return false;
+                ChessboardPoint new_point = new ChessboardPoint(new_row, new_col);
+                selectedPoint = new ChessboardPoint(old_row, old_col);
+                int type = line.charAt(4) - '0', level = line.charAt(5) - '0';
+                if(type == 2){
+                    if(level != model.getGrid()[new_row][new_col].getPiece().getRank())
+                        return false;
+                    if(model.getGrid()[old_row][old_col].getPiece() == null || model.getGrid()[new_row][new_col].getPiece() == null)
+                        return false;
+                    if(model.isValidCapture(selectedPoint, new_point))
+                        captureChessPiece(new_point);
+                    else return false;
+                }else{
+                    if((type == 1 && !model.inTrap(new_point, currentPlayer)) || (type == 0 && model.inTrap(new_point, currentPlayer)))
+                        return false;
+                    if(model.getGrid()[old_row][old_col].getPiece() == null || model.getGrid()[new_row][new_col].getPiece() != null)
+                        return false;
+                    if(model.isValidMove(selectedPoint, new_point))
+                        moveChessPiece(new_point);
+                    else return false;
+                }
             }
+            if(temp != turn || tmpcolor != currentPlayer)
+                return false;
+
+            if (currentPlayer==PlayerColor.RED){
+                redTimer.stop();
+                blueTimer.stop();
+                getChessGameFrame().addTimeLabel(60);
+                redTimer.start();
+            } else  {
+                redTimer.stop();
+                blueTimer.stop();
+                getChessGameFrame().addTimeLabel(60);
+                blueTimer.start();
+            }
+            view.repaint();
+            getChessGameFrame().repaint();
+            RepaintAll(getChessGameFrame().getStyle());
 
             reader.close();
             fileReader.close();
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return true;
     }
 
     public void regret(){
@@ -163,8 +208,8 @@ public class GameController implements GameListener {
             return;
 
         this.Steps.remove(length-1);
-        int old_row = temp.charAt(0) - '0', old_col = temp.charAt(1) - '0';
-        int new_row = temp.charAt(2) - '0', new_col = temp.charAt(3) - '0';
+        int old_row = temp.charAt(0) - 'a', old_col = temp.charAt(1) - 'a';
+        int new_row = temp.charAt(2) - 'a', new_col = temp.charAt(3) - 'a';
         ChessboardPoint old_point = new ChessboardPoint(old_row, old_col), new_point = new ChessboardPoint(new_row, new_col);
         int rank = temp.charAt(5) - '0';
         String name = "";
@@ -188,6 +233,10 @@ public class GameController implements GameListener {
             case 1://还原陷阱
                 model.addTrap(new_point, currentPlayer);
                 view.addTrap(new_point);
+                if (view.getGridComponents(new_point.getRow(),new_point.getCol())instanceof TrapCellComponent){
+                    ((TrapCellComponent) view.getGridComponents(new_point.getRow(),new_point.getCol())).setHasWorked(false);
+                }
+                view.getGridComponents(new_point.getRow(),new_point.getCol()).repaint();
                 break;
             case 2://还原棋子
                 ChessPiece chessPiece = new ChessPiece(currentPlayer, name, rank);
@@ -240,8 +289,8 @@ public class GameController implements GameListener {
          */
         String temp = "";
         int row = point.getRow(),col = point.getCol();
-        temp += selectedPoint.getRow(); temp += selectedPoint.getCol();
-        temp += row; temp += col;
+        temp += (char)('a' + selectedPoint.getRow()); temp += (char)('a' + selectedPoint.getCol());
+        temp += (char)('a' + row); temp += (char)('a' + col);
         if(model.inTrap(point,currentPlayer)){
             temp += "10";
         } else if(model.getGrid()[row][col].getPiece() != null){
@@ -251,6 +300,128 @@ public class GameController implements GameListener {
         System.out.println(temp);
         return temp;
     }
+    public void represent(int num){
+        if(num >= Steps.size())
+            return;
+        String i = Steps.get(num);
+        System.out.println(i);
+        int old_row = i.charAt(0) - 'a', old_col = i.charAt(1) - 'a';
+        int new_row = i.charAt(2) - 'a', new_col = i.charAt(3) - 'a';
+        ChessboardPoint new_point = new ChessboardPoint(new_row, new_col);
+        selectedPoint = new ChessboardPoint(old_row, old_col);
+        int type = i.charAt(4) - '0';
+        if(type == 2) {
+            captureChessPiece(new_point);
+            RepaintAll(getChessGameFrame().getStyle());
+        }
+        else {
+            moveChessPiece(new_point);
+            RepaintAll(getChessGameFrame().getStyle());
+        }
+    }
+    public void moveChessPiece(ChessboardPoint point){
+        if(model.inTrap(selectedPoint, currentPlayer)){
+            if (view.getGridComponents(selectedPoint.getRow(),selectedPoint.getCol())instanceof TrapCellComponent){
+                ((TrapCellComponent) view.getGridComponents(selectedPoint.getRow(),selectedPoint.getCol())).setHasWorked(true);
+            }
+            view.getGridComponents(selectedPoint.getRow(),selectedPoint.getCol()).repaint();
+        }
+        model.moveChessPiece(selectedPoint, point);
+        view.setChessComponentAtGrid(point, view.removeChessComponentAtGrid(selectedPoint));
+        selectedPoint = null;
+        swapColor();
+        chessGameFrame.addCurrentPlayerLabel();
+        if (currentPlayer.getColor()==Color.BLUE){
+            turn++;
+            chessGameFrame.addTurnLabel();
+            blueTimer.start();
+            redTimer.stop();
+            redTime=60;
+            chessGameFrame.addTimeLabel(60);
+        }else {
+            redTimer.start();
+            blueTimer.stop();
+            blueTime=60;
+            chessGameFrame.addTimeLabel(60);
+        }
+        chessGameFrame.repaint();
+        view.repaint();
+        if (FirstCellComponentList.size()!=0) {
+            for (CellComponent cellComponent : FirstCellComponentList) {
+                cellComponent.setSelected(false);
+                cellComponent.repaint();
+            }
+        }
+        if (FirstComponentList.size()!=0) {
+            for (Component value : FirstComponentList) {
+                value.setCanBeSelected(false);
+                value.repaint();
+            }
+        }
+        if(currentPlayer == PlayerColor.BLUE){
+            if(point.equals(new ChessboardPoint(8, 3))){
+                CountBlueChess = 0;
+                win();
+            }
+        }
+        if(currentPlayer == PlayerColor.RED){
+            if(point.equals(new ChessboardPoint(0, 3))){
+                CountRedChess = 0;
+                win();
+            }
+        }
+    }
+    public void captureChessPiece(ChessboardPoint point){
+        if(model.inTrap(selectedPoint, currentPlayer)){
+            model.removeTrap(selectedPoint);
+            view.removeTrap(selectedPoint);
+        }
+        if(model.inTrap(point, currentPlayer == PlayerColor.BLUE? PlayerColor.RED : PlayerColor.BLUE)){
+            model.removeTrap(selectedPoint);
+            view.removeTrap(selectedPoint);
+        }
+
+        if (model.getChessPieceOwner(point).getColor()==Color.RED){
+            CountRedChess--;
+        }
+        if (model.getChessPieceOwner(point).getColor()==Color.BLUE){
+            CountBlueChess--;
+        }
+        view.removeChessComponentAtGrid(point);
+        model.captureChessPiece(selectedPoint, point);
+        view.setChessComponentAtGrid(point, view.removeChessComponentAtGrid(selectedPoint));
+        selectedPoint = null;
+        swapColor();
+        chessGameFrame.addCurrentPlayerLabel();
+        if (currentPlayer.getColor()==Color.BLUE){
+            turn++;
+            chessGameFrame.addTurnLabel();
+            blueTimer.start();
+            redTimer.stop();
+            redTime=60;
+            chessGameFrame.addTimeLabel(60);
+        }else {
+            redTimer.start();
+            blueTimer.stop();
+            blueTime=60;
+            chessGameFrame.addTimeLabel(60);
+        }
+        chessGameFrame.repaint();
+        view.repaint();
+        if (FirstCellComponentList.size()!=0) {
+            for (CellComponent cellComponent : FirstCellComponentList) {
+                cellComponent.setSelected(false);
+                cellComponent.repaint();
+            }
+        }
+        if (FirstComponentList.size()!=0) {
+            for (Component value : FirstComponentList) {
+                value.setCanBeSelected(false);
+                value.repaint();
+            }
+        }
+        win();
+    }
     @Override
     public void onPlayerClickCell(ChessboardPoint point, CellComponent component) {
         if (win()){
@@ -258,55 +429,7 @@ public class GameController implements GameListener {
         }
         if (selectedPoint != null && model.isValidMove(selectedPoint, point)) {
             Steps.add(addMovement(point));
-            if(model.inTrap(selectedPoint, currentPlayer)){
-                model.removeTrap(selectedPoint);
-                view.removeTrap(selectedPoint);
-            }
-            model.moveChessPiece(selectedPoint, point);
-            view.setChessComponentAtGrid(point, view.removeChessComponentAtGrid(selectedPoint));
-            selectedPoint = null;
-            swapColor();
-            chessGameFrame.addCurrentPlayerLabel();
-            if (currentPlayer.getColor()==Color.BLUE){
-                turn++;
-                chessGameFrame.addTurnLabel();
-                blueTimer.start();
-                redTimer.stop();
-                redTime=60;
-                chessGameFrame.addTimeLabel(60);
-            }else {
-                redTimer.start();
-                blueTimer.stop();
-                blueTime=60;
-                chessGameFrame.addTimeLabel(60);
-            }
-            chessGameFrame.repaint();
-            view.repaint();
-            if (FirstCellComponentList.size()!=0) {
-                for (CellComponent cellComponent : FirstCellComponentList) {
-                    cellComponent.setSelected(false);
-                    cellComponent.repaint();
-                }
-            }
-            if (FirstComponentList.size()!=0) {
-                for (Component value : FirstComponentList) {
-                    value.setCanBeSelected(false);
-                    value.repaint();
-                }
-            }
-            if(currentPlayer == PlayerColor.BLUE){
-                if(point.equals(new ChessboardPoint(8, 3))){
-                    CountBlueChess = 0;
-                    win();
-                }
-            }
-            if(currentPlayer == PlayerColor.RED){
-                if(point.equals(new ChessboardPoint(0, 3))){
-                    CountRedChess = 0;
-                    win();
-                }
-            }
-            // TODO: if the chess enter Dens or Traps and so on
+            moveChessPiece(point);
         }
     }
 
@@ -344,55 +467,8 @@ public class GameController implements GameListener {
             }
         }else if(model.getChessPieceOwner(point) != model.getChessPieceOwner(selectedPoint)) {
             if (model.isValidCapture(selectedPoint, point)) {
-                if(model.inTrap(selectedPoint, currentPlayer)){
-                    model.removeTrap(selectedPoint);
-                    view.removeTrap(selectedPoint);
-                }
-                if(model.inTrap(point, currentPlayer == PlayerColor.BLUE? PlayerColor.RED : PlayerColor.BLUE)){
-                    model.removeTrap(selectedPoint);
-                    view.removeTrap(selectedPoint);
-                }
                 Steps.add(addMovement(point));
-                if (model.getChessPieceOwner(point).getColor()==Color.RED){
-                    CountRedChess--;
-                }
-                if (model.getChessPieceOwner(point).getColor()==Color.BLUE){
-                    CountBlueChess--;
-                }
-                view.removeChessComponentAtGrid(point);
-                model.captureChessPiece(selectedPoint, point);
-                view.setChessComponentAtGrid(point, view.removeChessComponentAtGrid(selectedPoint));
-                selectedPoint = null;
-                swapColor();
-                chessGameFrame.addCurrentPlayerLabel();
-                if (currentPlayer.getColor()==Color.BLUE){
-                    turn++;
-                    chessGameFrame.addTurnLabel();
-                    blueTimer.start();
-                    redTimer.stop();
-                    redTime=60;
-                    chessGameFrame.addTimeLabel(60);
-                }else {
-                    redTimer.start();
-                    blueTimer.stop();
-                    blueTime=60;
-                    chessGameFrame.addTimeLabel(60);
-                }
-                chessGameFrame.repaint();
-                view.repaint();
-                if (FirstCellComponentList.size()!=0) {
-                    for (CellComponent cellComponent : FirstCellComponentList) {
-                        cellComponent.setSelected(false);
-                        cellComponent.repaint();
-                    }
-                }
-                if (FirstComponentList.size()!=0) {
-                    for (Component value : FirstComponentList) {
-                        value.setCanBeSelected(false);
-                        value.repaint();
-                    }
-                }
-                win();
+                captureChessPiece(point);
             }
         }else if (selectedPoint.equals(point)) {
             selectedPoint = null;
@@ -499,7 +575,7 @@ public class GameController implements GameListener {
         blueTimer = new Timer(1000, new ActionListener() {
             int anInt=1;
             public void actionPerformed(ActionEvent e) {
-                if (currentPlayer.getColor().equals(Color.BLUE)) {
+                if (currentPlayer==PlayerColor.BLUE) {
                     chessGameFrame.addTimeLabel(blueTime);
                     chessGameFrame.repaint();
                     blueTime--;
@@ -525,7 +601,7 @@ public class GameController implements GameListener {
         redTimer = new Timer(1000, new ActionListener() {
             int anInt=1;
             public void actionPerformed(ActionEvent e) {
-                if (currentPlayer.getColor().equals(Color.RED)) {
+                if (currentPlayer==PlayerColor.RED) {
                     redTime--;
                     if (redTime == 0) {
                         chessGameFrame.addTimeLabel(redTime);
@@ -553,5 +629,14 @@ public class GameController implements GameListener {
     }
     public Timer getRedTimer(){
         return redTimer;
+    }
+    public void setModel(Chessboard model){
+        this.model = model;
+    }
+    public List<String> getSteps(){
+        return this.Steps;
+    }
+    public void setSteps(List<String> Steps){
+        this.Steps = Steps;
     }
 }

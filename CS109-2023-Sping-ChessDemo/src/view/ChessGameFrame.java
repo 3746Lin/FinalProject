@@ -14,6 +14,8 @@ import java.io.*;
 import java.util.ArrayList;
 
 import java.io.File;
+import java.util.List;
+import java.lang.Thread;
 
 
 /**
@@ -60,6 +62,8 @@ public class ChessGameFrame extends JFrame {
         addCurrentPlayerLabel();
         addRegretButton();
         addChangeStyleButton();
+        //addRepresentButton();
+        addExitButton();
     }
 
     public ChessboardComponent getChessboardComponent() {
@@ -68,6 +72,17 @@ public class ChessGameFrame extends JFrame {
 
     public void setChessboardComponent(ChessboardComponent chessboardComponent) {
         this.chessboardComponent = chessboardComponent;
+    }
+    private void init(){
+        chessboardComponent.getGameController().clearChessboard();
+        chessboardComponent.getGameController().getBlueTimer().stop();
+        chessboardComponent.getGameController().getRedTimer().stop();
+        chessboardComponent.initiateChessComponent(chessboardComponent.getGameController().getChessboard());
+        chessboardComponent.registerController(new GameController(chessboardComponent,new Chessboard(),chessboardComponent.getGameController().getChessGameFrame()));
+        chessboardComponent.getGameController().resetTurnAndCurrentPlayer();
+        chessboardComponent.getGameController().RepaintAll(style);
+        chessboardComponent.getGameController().getChessGameFrame().repaint();
+        chessboardComponent.repaint();
     }
 
     /**
@@ -100,7 +115,12 @@ public class ChessGameFrame extends JFrame {
             button.addActionListener((e) -> JOptionPane.showMessageDialog(
                     this, "基本规则:象>狮>虎>豹>狼>狗>猫>鼠(>象)\n" +
                             "狮虎可跳河(如果河里没有老鼠)\n" +
-                            "老鼠可以进河，但进河之后只能同级互吃不能吃岸上的象   "));
+                            "老鼠可以进河，但进河之后只能同级互吃不能吃岸上的象\n"+"" +
+                            "进入未被使用过的陷阱后，可以被任一对方棋子吃掉\n" +
+                            "进入敌方兽穴或吃掉所有敌方棋子以获得胜利！\n"+
+                            "喜羊羊版本：\n" +
+                            "包包大人=黑大帅>喜羊羊=灰太狼>沸羊羊=红太狼>慢羊羊=夜太狼>懒羊羊=灰二太太狼>\n" +
+                            "暖羊羊=巫师狼>美羊羊=蕉太狼>潇洒哥=小灰灰(>包包大人=黑大帅) "));
         }else {
             button.addActionListener((e) -> JOptionPane.showMessageDialog(
                     this, "基本规则:包包大人=黑大帅>喜羊羊=灰太狼>沸羊羊=红太狼>慢羊羊=夜太狼>懒羊羊=灰二太太狼>暖羊羊=巫师狼>美羊羊=蕉太狼>潇洒哥=小灰灰(>包包大人=黑大帅)   "));
@@ -121,17 +141,9 @@ public class ChessGameFrame extends JFrame {
     private class RestartButtonClickListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent arg0) {
-                SwingUtilities.invokeLater(() -> {
-                    chessboardComponent.getGameController().clearChessboard();
-                    chessboardComponent.getGameController().getBlueTimer().stop();
-                    chessboardComponent.getGameController().getRedTimer().stop();
-                    chessboardComponent.initiateChessComponent(chessboardComponent.getGameController().getChessboard());
-                    chessboardComponent.registerController(new GameController(chessboardComponent,new Chessboard(),chessboardComponent.getGameController().getChessGameFrame()));
-                    chessboardComponent.getGameController().resetTurnAndCurrentPlayer();
-                    chessboardComponent.getGameController().RepaintAll(style);
-                    chessboardComponent.getGameController().getChessGameFrame().repaint();
-                    chessboardComponent.repaint();
-                });
+            SwingUtilities.invokeLater(() -> {
+                init();
+            });
         }
     }
     private void addBackground(){
@@ -230,14 +242,24 @@ public class ChessGameFrame extends JFrame {
                 try {
                     File txt = new File("./txt/" + input + ".txt");
                     if (txt.exists()) {
-                        this.chessboardComponent.getGameController().load("./txt/" + input + ".txt");
-                        break;
+                        if(this.chessboardComponent.getGameController().load("./txt/" + input + ".txt"))
+                            break;
+
+                        init();
+
+                        JFrame frame = new JFrame("提示窗口");
+                        frame.setSize(400, 300);
+                        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                        JOptionPane.showMessageDialog(frame, "文件已损坏！");
+                        input = JOptionPane.showInputDialog(this, "请输入要载入的文件名");
+                        remove(frame);
+
                     } else if (input.equals("")) {
                         JFrame frame = new JFrame("提示窗口");
                         frame.setSize(400, 300);
                         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                         JOptionPane.showMessageDialog(frame, "文件名为空，请重新输入文件名");
-                        input = JOptionPane.showInputDialog(this, "请输入要保存的文件名");
+                        input = JOptionPane.showInputDialog(this, "请输入要载入的文件名");
                         remove(frame);
                     } else {
                         throw new FileNotFoundException("文件不存在");
@@ -247,7 +269,7 @@ public class ChessGameFrame extends JFrame {
                     frame.setSize(400, 300);
                     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                     JOptionPane.showMessageDialog(frame, "文件不存在，请重新输入文件名");
-                    input = JOptionPane.showInputDialog(this, "请输入要保存的文件名");
+                    input = JOptionPane.showInputDialog(this, "请输入要载入的文件名");
                     remove(frame);
                 }
             }
@@ -309,6 +331,40 @@ public class ChessGameFrame extends JFrame {
             this.chessboardComponent.getGameController().regret();
         });
     }
+    private void addRepresentButton() {
+        JButton button = new JButton("重播");
+        button.setLocation(HEIGTH-25, HEIGTH / 10 + 600);
+        button.setSize(250, 60);
+        button.setFont(new Font("宋体", Font.BOLD, 24));
+        add(button);
+
+        button.addActionListener(e -> {
+            List<String> temp = this.chessboardComponent.getGameController().getSteps();
+            init();
+            this.chessboardComponent.getGameController().setSteps(temp);
+
+            int tmp = 0;
+            while(tmp++ < 1000){
+                this.chessboardComponent.getGameController().represent(tmp);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+    }
+    private void addExitButton() {
+        JButton button = new JButton("退出");
+        button.setLocation(HEIGTH-25, HEIGTH / 10 + 600);
+        button.setSize(250, 60);
+        button.setFont(new Font("宋体", Font.BOLD, 24));
+        add(button);
+
+        button.addActionListener(e -> {
+            System.exit(0);
+        });
+    }
     private void setBackGroundMusic(){
         JFrame jFrame = new JFrame("开关背景音乐");
         jFrame.setSize(400, 100);
@@ -339,7 +395,7 @@ public class ChessGameFrame extends JFrame {
     private void addMusic(int i)throws Exception{
         if (i==1) {
             //if (playMusic.getClip()!=null&&!playMusic.getClip().isRunning()){
-                playMusic.PlayExactMusic();
+            playMusic.PlayExactMusic();
             //}
         }else {
             playMusic.stop();
@@ -347,3 +403,4 @@ public class ChessGameFrame extends JFrame {
     }
 
 }
+
