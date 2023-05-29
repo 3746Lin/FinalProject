@@ -106,6 +106,8 @@ public class GameController implements GameListener {
             String line = reader.readLine();
             clearChessboard();
             resetTurnAndCurrentPlayer();
+            if(line.length() < 6)
+                return false;
             if(!line.substring(0, 3).equals("BBB") && !line.substring(0, 3).equals("RRR"))
                 return false;
             PlayerColor tmpcolor = line.substring(0, 3).equals("BBB")?PlayerColor.BLUE:PlayerColor.RED;
@@ -138,6 +140,8 @@ public class GameController implements GameListener {
                         captureChessPiece(new_point);
                     else return false;
                 }else{
+                    if(level != 0)
+                        return false;
                     if((type == 1 && !model.inTrap(new_point, currentPlayer)) || (type == 0 && model.inTrap(new_point, currentPlayer)))
                         return false;
                     if(model.getGrid()[old_row][old_col].getPiece() == null || model.getGrid()[new_row][new_col].getPiece() != null)
@@ -301,8 +305,10 @@ public class GameController implements GameListener {
         return temp;
     }
     public void represent(int num){
-        if(num >= Steps.size())
+        if(num >= Steps.size()){
+            chessGameFrame.setRepresenting(false);
             return;
+        }
         String i = Steps.get(num);
         System.out.println(i);
         int old_row = i.charAt(0) - 'a', old_col = i.charAt(1) - 'a';
@@ -321,10 +327,7 @@ public class GameController implements GameListener {
     }
     public void moveChessPiece(ChessboardPoint point){
         if(model.inTrap(selectedPoint, currentPlayer)){
-            if (view.getGridComponents(selectedPoint.getRow(),selectedPoint.getCol())instanceof TrapCellComponent){
-                ((TrapCellComponent) view.getGridComponents(selectedPoint.getRow(),selectedPoint.getCol())).setHasWorked(true);
-            }
-            view.getGridComponents(selectedPoint.getRow(),selectedPoint.getCol()).repaint();
+            model.removeTrap(selectedPoint);
         }
         model.moveChessPiece(selectedPoint, point);
         view.setChessComponentAtGrid(point, view.removeChessComponentAtGrid(selectedPoint));
@@ -424,6 +427,9 @@ public class GameController implements GameListener {
     }
     @Override
     public void onPlayerClickCell(ChessboardPoint point, CellComponent component) {
+        if(chessGameFrame.getRepresenting()) {
+            return;
+        }
         if (win()){
             return;
         }
@@ -436,6 +442,9 @@ public class GameController implements GameListener {
     // click a cell with a chess
     @Override
     public void onPlayerClickChessPiece(ChessboardPoint point, Component component) {
+        if(chessGameFrame.getRepresenting()) {
+            return;
+        }
         if (win()){
             return;
         }
