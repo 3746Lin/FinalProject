@@ -60,6 +60,7 @@ public class ChessGameFrame extends JFrame {
         addCurrentPlayerLabel();
         addRegretButton();
         addChangeStyleButton();
+        addRepresentButton();
     }
 
     public ChessboardComponent getChessboardComponent() {
@@ -84,7 +85,7 @@ public class ChessGameFrame extends JFrame {
      */
     private void addLabel() {
         JLabel statusLabel = new JLabel("菜单");
-        statusLabel.setLocation(HEIGTH+70, HEIGTH/10+60);
+        statusLabel.setLocation(HEIGTH+70, HEIGTH/10);
         statusLabel.setSize(250, 60);
         statusLabel.setFont(new Font("宋体", Font.BOLD, 30));
         add(statusLabel);
@@ -105,7 +106,7 @@ public class ChessGameFrame extends JFrame {
             button.addActionListener((e) -> JOptionPane.showMessageDialog(
                     this, "基本规则:包包大人=黑大帅>喜羊羊=灰太狼>沸羊羊=红太狼>慢羊羊=夜太狼>懒羊羊=灰二太太狼>暖羊羊=巫师狼>美羊羊=蕉太狼>潇洒哥=小灰灰(>包包大人=黑大帅)   "));
         }
-        button.setLocation(HEIGTH-25, HEIGTH / 10 + 120);
+        button.setLocation(HEIGTH-25, HEIGTH / 10 + 60);
         button.setSize(250, 60);
         button.setFont(new Font("宋体", Font.BOLD, 24));
         add(button);
@@ -113,7 +114,7 @@ public class ChessGameFrame extends JFrame {
     private void addInitialButton() {
         JButton button = new JButton("重新开始");
         button.addActionListener(new RestartButtonClickListener());
-        button.setLocation(HEIGTH-25, HEIGTH / 10 + 200);
+        button.setLocation(HEIGTH-25, HEIGTH / 10 + 140);
         button.setSize(250, 60);
         button.setFont(new Font("宋体", Font.BOLD, 24));
         add(button);
@@ -186,7 +187,7 @@ public class ChessGameFrame extends JFrame {
     }
     private void addSaveButton() {
         JButton button = new JButton("存档");
-        button.setLocation(HEIGTH-25, HEIGTH / 10 + 280);
+        button.setLocation(HEIGTH-25, HEIGTH / 10 + 220);
         button.setSize(250, 60);
         button.setFont(new Font("宋体", Font.BOLD, 24));
         add(button);
@@ -220,7 +221,7 @@ public class ChessGameFrame extends JFrame {
 
     private void addLoadButton() {
         JButton button = new JButton("读档");
-        button.setLocation(HEIGTH-25, HEIGTH / 10 + 360);
+        button.setLocation(HEIGTH-25, HEIGTH / 10 + 300);
         button.setSize(250, 60);
         button.setFont(new Font("宋体", Font.BOLD, 24));
         add(button);
@@ -273,7 +274,7 @@ public class ChessGameFrame extends JFrame {
     }
     private void addChangeStyleButton() {
         JButton button = new JButton("设置风格和背景音乐");
-        button.setLocation(HEIGTH-50, HEIGTH / 10 + 520);
+        button.setLocation(HEIGTH-50, HEIGTH / 10 + 460);
         button.setSize(300, 60);
         button.setFont(new Font("宋体", Font.BOLD, 24));
         add(button);
@@ -318,13 +319,24 @@ public class ChessGameFrame extends JFrame {
     }
     private void addRegretButton() {
         JButton button = new JButton("悔棋");
-        button.setLocation(HEIGTH-25, HEIGTH / 10 + 440);
+        button.setLocation(HEIGTH-25, HEIGTH / 10 + 380);
         button.setSize(250, 60);
         button.setFont(new Font("宋体", Font.BOLD, 24));
         add(button);
 
         button.addActionListener(e -> {
             this.chessboardComponent.getGameController().regret();
+        });
+    }
+    private void addRepresentButton() {
+        JButton button = new JButton("重播");
+        button.setLocation(HEIGTH-25, HEIGTH / 10 + 540);
+        button.setSize(250, 60);
+        button.setFont(new Font("宋体", Font.BOLD, 24));
+        add(button);
+
+        button.addActionListener(e -> {
+            this.chessboardComponent.getGameController().represent();
         });
     }
     private void setBackGroundMusic(){

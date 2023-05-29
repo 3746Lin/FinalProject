@@ -17,6 +17,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.Thread;
 
 /**
  * Controller is the connection between model and view,
@@ -106,13 +107,14 @@ public class GameController implements GameListener {
             model = new Chessboard();
             int temp = Integer.parseInt(line.substring(3, 6));
             view.initiateChessComponent(getChessboard());
-            this.Steps = new ArrayList<String>();
+            Steps = new ArrayList<String>();
+            Steps.add("000000");
             turn = 1;
 
             while ((line = reader.readLine()) != null) {
                 this.Steps.add(line);
                 if(win())
-                    continue;
+                    break;
 
                 int old_row = line.charAt(0) - 'a', old_col = line.charAt(1) - 'a';
                 int new_row = line.charAt(2) - 'a', new_col = line.charAt(3) - 'a';
@@ -276,8 +278,40 @@ public class GameController implements GameListener {
         System.out.println(temp);
         return temp;
     }
+    public void represent(){
+        turn = 1; currentPlayer = PlayerColor.BLUE;
+        selectedPoint = null;
+        CountBlueChess = 8; CountRedChess = 8;
+        clearChessboard();
+        resetTurnAndCurrentPlayer();
+        model = new Chessboard();
+        view.initiateChessComponent(model);
+        view.repaint();
+        getChessGameFrame().repaint();
+        RepaintAll(getChessGameFrame().getStyle());
+        for(String i:Steps){
+            if(i.equals("000000"))
+                continue;
+            if (win())
+                break;
+            System.out.println(i);
+            int old_row = i.charAt(0) - 'a', old_col = i.charAt(1) - 'a';
+            int new_row = i.charAt(2) - 'a', new_col = i.charAt(3) - 'a';
+            ChessboardPoint new_point = new ChessboardPoint(new_row, new_col);
+            selectedPoint = new ChessboardPoint(old_row, old_col);
+            int type = i.charAt(4) - '0';
+            if(type == 2)
+                captureChessPiece(new_point);
+            else
+                moveChessPiece(new_point);
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     public void moveChessPiece(ChessboardPoint point){
-        Steps.add(addMovement(point));
         if(model.inTrap(selectedPoint, currentPlayer)){
             model.removeTrap(selectedPoint);
             view.removeTrap(selectedPoint);
@@ -336,7 +370,6 @@ public class GameController implements GameListener {
             model.removeTrap(selectedPoint);
             view.removeTrap(selectedPoint);
         }
-        Steps.add(addMovement(point));
         if (model.getChessPieceOwner(point).getColor()==Color.RED){
             CountRedChess--;
         }
@@ -384,6 +417,7 @@ public class GameController implements GameListener {
             return;
         }
         if (selectedPoint != null && model.isValidMove(selectedPoint, point)) {
+            Steps.add(addMovement(point));
             moveChessPiece(point);
             // TODO: if the chess enter Dens or Traps and so on
         }
@@ -423,6 +457,7 @@ public class GameController implements GameListener {
             }
         }else if(model.getChessPieceOwner(point) != model.getChessPieceOwner(selectedPoint)) {
             if (model.isValidCapture(selectedPoint, point)) {
+                Steps.add(addMovement(point));
                 captureChessPiece(point);
             }
         }else if (selectedPoint.equals(point)) {
