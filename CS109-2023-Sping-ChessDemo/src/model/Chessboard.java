@@ -124,10 +124,7 @@ public class Chessboard {
         return getGridAt(point).getPiece().getOwner();
     }
 
-    public void addChessPiece(String str){
-        int i = (int)(str.charAt(0) - 'a'),j = (int)(str.charAt(1) - 'a');
-        int rank = (int)(str.charAt(2) - 'a');
-        PlayerColor color = str.charAt(3) == '6' ? PlayerColor.BLUE : PlayerColor.RED;
+    public void addChessPiece(int rank, int i,int j,PlayerColor color){
         String name = "";
         switch (rank){
             case 1 : name = "Rat";break;

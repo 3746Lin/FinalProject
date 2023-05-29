@@ -72,7 +72,8 @@ public class GameController implements GameListener {
             for (int j = 0; j < Constant.CHESSBOARD_COL_SIZE.getNum(); j++) {
                 ChessboardPoint point = new ChessboardPoint(i,j);
                 model.getGrid()[i][j].setPiece(null);
-                view.getGridComponents(i,j).setSelected(false);
+                view.removeChessComponentAtGrid(new ChessboardPoint(i, j));
+                view.getGridComponents(i, j).setSelected(false);
                 if (view.getGridComponents(i,j)instanceof TrapCellComponent){
                     ((TrapCellComponent) view.getGridComponents(i,j)).setHasWorked(false);
                 }
@@ -85,75 +86,125 @@ public class GameController implements GameListener {
 
     public String save(){
         String out = "",temp;
-        out += currentPlayer == PlayerColor.BLUE?"BBB": "RRR";
-        temp = "";  temp += turn;
+//        out += currentPlayer == PlayerColor.BLUE?"BBB": "RRR";
+//        temp = "";  temp += turn;
+//        while(temp.length() < 3)    temp = '0' + temp;
+//        out += temp;
+//        out += "\n";
+//
+//        for(String i:Steps){
+//            if(i.equals("000000"))
+//                continue;
+//            out += i; out += "\n";
+//        }
+        for(int i=0;i<9;i++){
+            for(int j=0;j<7;j++){
+                ChessPiece temppiece = model.getGrid()[i][j].getPiece();
+                if(temppiece != null){
+                    out += temppiece.getOwner() == PlayerColor.BLUE ? 1 : 2;
+                    out += temppiece.getRank();
+                }
+                else
+                    out += "00";
+                out += " ";
+            }
+            out += "\n";
+        }
+        out += currentPlayer == PlayerColor.BLUE ? "BBB" : "RRR";
+        temp = ""; temp += turn;
         while(temp.length() < 3)    temp = '0' + temp;
         out += temp;
         out += "\n";
-
-        for(String i:Steps){
-            if(i.equals("000000"))
-                continue;
-            out += i; out += "\n";
-        }
         return out;
     }
 
-    public boolean load(String path){
+    public int load(String path){
         try {
             FileReader fileReader = new FileReader(path);
             BufferedReader reader = new BufferedReader(fileReader);
-            String line = reader.readLine();
             clearChessboard();
             resetTurnAndCurrentPlayer();
-            if(line.length() < 6)
-                return false;
-            if(!line.substring(0, 3).equals("BBB") && !line.substring(0, 3).equals("RRR"))
-                return false;
-            PlayerColor tmpcolor = line.substring(0, 3).equals("BBB")?PlayerColor.BLUE:PlayerColor.RED;
-            model = new Chessboard();
-            int temp = Integer.parseInt(line.substring(3, 6));
-            view.initiateChessComponent(getChessboard());
-            this.Steps = new ArrayList<String>();
-            this.Steps.add("000000");
-            turn = 1;
+            for(int i=0;i<9;i++){
+                String line = reader.readLine();
+                if(line.length() != 21)
+                    return 102;
+                for(int j=0;j<line.length();j+=3){
+                    if(line.charAt(j+2) != ' ')
+                        return 103;
+                    int tmp = Integer.parseInt(line.substring(j, j+2));
+                    int fst = tmp / 10, scd = tmp % 10;
+                    if(fst != 0 && fst != 1 && fst != 2)
+                        return 103;
+                    if(fst == 0 && scd != 0)
+                        return 103;
+                    if(fst == 0 && scd == 0)
+                        continue;
+                    if(scd == 0 || scd == 9)
+                        return 103;
 
-            while ((line = reader.readLine()) != null) {
-                this.Steps.add(line);
-                if(win())
-                    continue;
-
-                int old_row = line.charAt(0) - 'a', old_col = line.charAt(1) - 'a';
-                int new_row = line.charAt(2) - 'a', new_col = line.charAt(3) - 'a';
-                if( (old_row < 0 || old_row > 8) || (new_row < 0 || new_row > 8)
-                        ||  (old_col < 0 || old_col > 6) || (new_col < 0 || new_col > 6))
-                    return false;
-                ChessboardPoint new_point = new ChessboardPoint(new_row, new_col);
-                selectedPoint = new ChessboardPoint(old_row, old_col);
-                int type = line.charAt(4) - '0', level = line.charAt(5) - '0';
-                if(type == 2){
-                    if(level != model.getGrid()[new_row][new_col].getPiece().getRank())
-                        return false;
-                    if(model.getGrid()[old_row][old_col].getPiece() == null || model.getGrid()[new_row][new_col].getPiece() == null)
-                        return false;
-                    if(model.isValidCapture(selectedPoint, new_point))
-                        captureChessPiece(new_point);
-                    else return false;
-                }else{
-                    if(level != 0)
-                        return false;
-                    if((type == 1 && !model.inTrap(new_point, currentPlayer)) || (type == 0 && model.inTrap(new_point, currentPlayer)))
-                        return false;
-                    if(model.getGrid()[old_row][old_col].getPiece() == null || model.getGrid()[new_row][new_col].getPiece() != null)
-                        return false;
-                    if(model.isValidMove(selectedPoint, new_point))
-                        moveChessPiece(new_point);
-                    else return false;
+                    PlayerColor owner = fst == 1 ? PlayerColor.BLUE : PlayerColor.RED;
+                    view.addComponent(new ChessboardPoint(i, j / 3), scd, owner);
+                    model.addChessPiece(scd, i, j / 3, owner);
                 }
             }
-            if(temp != turn || tmpcolor != currentPlayer)
-                return false;
-
+            String line = reader.readLine();
+            if(line.length() != 6)
+                return 104;
+            if(line.substring(0, 3) != "BBB" && line.substring(0, 3) != "RRR")
+                return 104;
+            currentPlayer = line.substring(0, 3) == "BBB" ? PlayerColor.BLUE : PlayerColor.RED;
+            turn = Integer.parseInt(line.substring(3, 6));
+//            String line = reader.readLine();
+//            clearChessboard();
+//            resetTurnAndCurrentPlayer();
+//            if(line.length() < 6)
+//                return false;
+//            if(!line.substring(0, 3).equals("BBB") && !line.substring(0, 3).equals("RRR"))
+//                return false;
+//            PlayerColor tmpcolor = line.substring(0, 3).equals("BBB")?PlayerColor.BLUE:PlayerColor.RED;
+//            model = new Chessboard();
+//            int temp = Integer.parseInt(line.substring(3, 6));
+//            view.initiateChessComponent(getChessboard());
+//            this.Steps = new ArrayList<String>();
+//            this.Steps.add("000000");
+//            turn = 1;
+//
+//            while ((line = reader.readLine()) != null) {
+//                this.Steps.add(line);
+//                if(win())
+//                    continue;
+//
+//                int old_row = line.charAt(0) - 'a', old_col = line.charAt(1) - 'a';
+//                int new_row = line.charAt(2) - 'a', new_col = line.charAt(3) - 'a';
+//                if( (old_row < 0 || old_row > 8) || (new_row < 0 || new_row > 8)
+//                        ||  (old_col < 0 || old_col > 6) || (new_col < 0 || new_col > 6))
+//                    return false;
+//                ChessboardPoint new_point = new ChessboardPoint(new_row, new_col);
+//                selectedPoint = new ChessboardPoint(old_row, old_col);
+//                int type = line.charAt(4) - '0', level = line.charAt(5) - '0';
+//                if(type == 2){
+//                    if(level != model.getGrid()[new_row][new_col].getPiece().getRank())
+//                        return false;
+//                    if(model.getGrid()[old_row][old_col].getPiece() == null || model.getGrid()[new_row][new_col].getPiece() == null)
+//                        return false;
+//                    if(model.isValidCapture(selectedPoint, new_point))
+//                        captureChessPiece(new_point);
+//                    else return false;
+//                }else{
+//                    if(level != 0)
+//                        return false;
+//                    if((type == 1 && !model.inTrap(new_point, currentPlayer)) || (type == 0 && model.inTrap(new_point, currentPlayer)))
+//                        return false;
+//                    if(model.getGrid()[old_row][old_col].getPiece() == null || model.getGrid()[new_row][new_col].getPiece() != null)
+//                        return false;
+//                    if(model.isValidMove(selectedPoint, new_point))
+//                        moveChessPiece(new_point);
+//                    else return false;
+//                }
+//            }
+//            if(temp != turn || tmpcolor != currentPlayer)
+//                return false;
+//
             if (currentPlayer==PlayerColor.RED){
                 redTimer.stop();
                 blueTimer.stop();
@@ -171,11 +222,12 @@ public class GameController implements GameListener {
 
             reader.close();
             fileReader.close();
-            return true;
+//            return true;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return true;
+//        return true;
+        return 100;
     }
 
     public void regret(){

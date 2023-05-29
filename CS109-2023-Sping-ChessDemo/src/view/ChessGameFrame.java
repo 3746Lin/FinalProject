@@ -248,7 +248,7 @@ public class ChessGameFrame extends JFrame {
                     try {
                         File txt = new File("./txt/" + input + ".txt");
                         if (txt.exists()) {
-                            if (this.chessboardComponent.getGameController().load("./txt/" + input + ".txt"))
+                            if (this.chessboardComponent.getGameController().load("./txt/" + input + ".txt") == 100)
                                 break;
 
                             init();
